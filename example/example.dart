@@ -4,6 +4,7 @@ import 'package:opus_dart/opus_dart.dart';
 import 'dart:ffi';
 import 'dart:io';
 
+/// Should be run from the example
 Future<void> main() async {
   init();
   await example();
@@ -31,8 +32,7 @@ void init() {
 Future<void> example() async {
   const int sampleRate = 16000;
   const int channels = 1;
-  Stream<List<int>> input =
-      await new File('./test/s16le_16000hz_mono.raw').openRead();
+  Stream<List<int>> input = await new File('s16le_16000hz_mono.raw').openRead();
   File file = new File('output.raw');
   IOSink output = file.openWrite();
   await input

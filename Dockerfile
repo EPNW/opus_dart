@@ -40,5 +40,5 @@ RUN rm -rf .packages \
 	&& pub get
 	
 # Set entrypoint
-ENTRYPOINT ["dart","./test/info.dart"]
+ENTRYPOINT ["dart","./example/info.dart"]
 

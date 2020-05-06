@@ -341,7 +341,7 @@ class BufferedOpusDecoder extends OpusDecoder {
         free(input);
         free(output);
         free(softClipBuffer);
-        throw new OpusException(error.value);
+        throw OpusException(error.value);
       }
     } finally {
       free(error);

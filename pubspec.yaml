@@ -1,5 +1,5 @@
 name: opus_dart
-version: 1.0.1
+version: 1.0.2
 author: EPNW <prokopwieler.hardundsoftware@gmail.com>
 homepage: https://github.com/EPNW/opus_dart
 description: Wraps libopus in dart, and additionally provides a dart friendly API for encoding and decoding
