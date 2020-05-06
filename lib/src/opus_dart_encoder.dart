@@ -39,10 +39,9 @@ class SimpleOpusEncoder extends OpusEncoder {
             sampleRate, channels, _applicationCodes[application], error);
     try {
       if (error.value == opus_defines.OPUS_OK) {
-        return new SimpleOpusEncoder._(
-            encoder, sampleRate, channels, application);
+        return SimpleOpusEncoder._(encoder, sampleRate, channels, application);
       } else {
-        throw new OpusException(error.value);
+        throw OpusException(error.value);
       }
     } finally {
       free(error);
@@ -76,10 +75,10 @@ class SimpleOpusEncoder extends OpusEncoder {
     try {
       if (outputLength >= opus_defines.OPUS_OK) {
         Uint8List output =
-            new Uint8List.fromList(outputNative.asTypedList(outputLength));
+            Uint8List.fromList(outputNative.asTypedList(outputLength));
         return output;
       } else {
-        throw new OpusException(outputLength);
+        throw OpusException(outputLength);
       }
     } finally {
       free(inputNative);
@@ -102,10 +101,10 @@ class SimpleOpusEncoder extends OpusEncoder {
     try {
       if (outputLength >= opus_defines.OPUS_OK) {
         Uint8List output =
-            new Uint8List.fromList(outputNative.asTypedList(outputLength));
+            Uint8List.fromList(outputNative.asTypedList(outputLength));
         return output;
       } else {
-        throw new OpusException(outputLength);
+        throw OpusException(outputLength);
       }
     } finally {
       free(inputNative);
@@ -219,7 +218,7 @@ class BufferedOpusEncoder extends OpusEncoder {
   ///
   /// [maxOutputBufferSizeBytes] defaults to [maxDataBytes] to guarantee that their is enough space in the
   /// output buffer for any possible valid input.
-  /// 
+  ///
   /// For the other parameters, see the matching fields for more information.
   factory BufferedOpusEncoder(
       {@required int sampleRate,
@@ -241,19 +240,12 @@ class BufferedOpusEncoder extends OpusEncoder {
             sampleRate, channels, _applicationCodes[application], error);
     try {
       if (error.value == opus_defines.OPUS_OK) {
-        return new BufferedOpusEncoder._(
-            encoder,
-            sampleRate,
-            channels,
-            application,
-            input,
-            maxInputBufferSizeBytes,
-            output,
-            maxOutputBufferSizeBytes);
+        return BufferedOpusEncoder._(encoder, sampleRate, channels, application,
+            input, maxInputBufferSizeBytes, output, maxOutputBufferSizeBytes);
       } else {
         free(input);
         free(output);
-        throw new OpusException(error.value);
+        throw OpusException(error.value);
       }
     } finally {
       free(error);
@@ -283,7 +275,7 @@ class BufferedOpusEncoder extends OpusEncoder {
     if (_outputBufferIndex >= opus_defines.OPUS_OK) {
       return outputBuffer;
     } else {
-      throw new OpusException(_outputBufferIndex);
+      throw OpusException(_outputBufferIndex);
     }
   }
 
@@ -305,7 +297,7 @@ class BufferedOpusEncoder extends OpusEncoder {
     if (_outputBufferIndex >= opus_defines.OPUS_OK) {
       return outputBuffer;
     } else {
-      throw new OpusException(_outputBufferIndex);
+      throw OpusException(_outputBufferIndex);
     }
   }
 

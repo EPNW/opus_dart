@@ -21,7 +21,7 @@ abstract class OpusPacketUtils {
       if (sampleCount >= opus_defines.OPUS_OK) {
         return sampleCount;
       } else {
-        throw new OpusException(sampleCount);
+        throw OpusException(sampleCount);
       }
     } finally {
       free(data);
@@ -38,7 +38,7 @@ abstract class OpusPacketUtils {
       if (frameCount >= opus_defines.OPUS_OK) {
         return frameCount;
       } else {
-        throw new OpusException(frameCount);
+        throw OpusException(frameCount);
       }
     } finally {
       free(data);
@@ -56,7 +56,7 @@ abstract class OpusPacketUtils {
       if (samplesPerFrame >= opus_defines.OPUS_OK) {
         return samplesPerFrame;
       } else {
-        throw new OpusException(samplesPerFrame);
+        throw OpusException(samplesPerFrame);
       }
     } finally {
       free(data);
@@ -72,7 +72,7 @@ abstract class OpusPacketUtils {
       if (channelCount >= opus_defines.OPUS_OK) {
         return channelCount;
       } else {
-        throw new OpusException(channelCount);
+        throw OpusException(channelCount);
       }
     } finally {
       free(data);
@@ -88,7 +88,7 @@ abstract class OpusPacketUtils {
       if (bandwidth >= opus_defines.OPUS_OK) {
         return bandwidth;
       } else {
-        throw new OpusException(bandwidth);
+        throw OpusException(bandwidth);
       }
     } finally {
       free(data);

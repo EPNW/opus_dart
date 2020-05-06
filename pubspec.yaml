@@ -1,8 +1,8 @@
 name: opus_dart
-version: 1.0.0
+version: 1.0.1
 author: EPNW <prokopwieler.hardundsoftware@gmail.com>
 homepage: https://github.com/EPNW/opus_dart
-description: libopus wrappers for dart
+description: Wraps libopus in dart, and additionally provides a dart friendly API for encoding and decoding
 environment:
   sdk: ">=2.7.0 <3.0.0"
 dependencies:

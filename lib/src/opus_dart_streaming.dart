@@ -28,7 +28,7 @@ enum FrameTime {
 ///
 /// The different constructors determine, how the input stream is interpreted,
 /// and of what type they have to be ([Float32List], [Int16List] or [Uint8List]).
-/// If a [CastError] occurs the stream you bound this transformer to is most
+/// If a [TypeError] occurs the stream you bound this transformer to is most
 /// likly not a [Stream<Float32List>], [Stream<Float32List>] or [Stream<Float32List>].
 ///
 /// When using a [Float32List] set the instances type parameter T to [double],
@@ -95,8 +95,8 @@ class StreamOpusEncoder<T extends num>
       @required int sampleRate,
       @required int channels,
       @required Application application,
-      bool fillUpLastFrame: true,
-      bool copyOutput: true})
+      bool fillUpLastFrame = true,
+      bool copyOutput = true})
       : this._(frameTime, true, Float32List, sampleRate, channels, application,
             fillUpLastFrame, copyOutput);
 
@@ -109,8 +109,8 @@ class StreamOpusEncoder<T extends num>
       @required int sampleRate,
       @required int channels,
       @required Application application,
-      bool fillUpLastFrame: true,
-      bool copyOutput: true})
+      bool fillUpLastFrame = true,
+      bool copyOutput = true})
       : this._(frameTime, false, Int16List, sampleRate, channels, application,
             fillUpLastFrame, copyOutput);
 
@@ -128,8 +128,8 @@ class StreamOpusEncoder<T extends num>
       @required int sampleRate,
       @required int channels,
       @required Application application,
-      bool fillUpLastFrame: true,
-      bool copyOutput: true})
+      bool fillUpLastFrame = true,
+      bool copyOutput = true})
       : this._(frameTime, floatInput, Uint8List, sampleRate, channels,
             application, fillUpLastFrame, copyOutput);
 
@@ -142,7 +142,7 @@ class StreamOpusEncoder<T extends num>
       Application application,
       this.fillUpLastFrame,
       this.copyOutput)
-      : this._encoder = new BufferedOpusEncoder(
+      : this._encoder = BufferedOpusEncoder(
             sampleRate: sampleRate,
             channels: channels,
             application: application,
@@ -152,7 +152,7 @@ class StreamOpusEncoder<T extends num>
   /// Binds this stream to transfrom an other stream.
   /// The runtime type of the input `stream` must be castable to either
   /// [Stream<Float32List>], [Stream<Int16List>] or [Stream<Uint8List>]
-  /// depending on what constructor was used or a [CastError] will be thrown.
+  /// depending on what constructor was used or a [TypeError] will be thrown.
   @override
   Stream<Uint8List> bind(Stream<List<T>> stream) async* {
     try {
@@ -188,7 +188,7 @@ class StreamOpusEncoder<T extends num>
           if (_encoder.inputBufferIndex == _encoder.maxInputBufferSizeBytes) {
             Uint8List bytes =
                 floats ? _encoder.encodeFloat() : _encoder.encode();
-            yield copyOutput ? new Uint8List.fromList(bytes) : bytes;
+            yield copyOutput ? Uint8List.fromList(bytes) : bytes;
             _encoder.inputBufferIndex = 0;
           }
         }
@@ -197,16 +197,16 @@ class StreamOpusEncoder<T extends num>
         if (fillUpLastFrame) {
           _encoder.inputBuffer.setAll(
               _encoder.inputBufferIndex,
-              new Uint8List(_encoder.maxInputBufferSizeBytes -
+              Uint8List(_encoder.maxInputBufferSizeBytes -
                   _encoder.inputBufferIndex));
           _encoder.inputBufferIndex = _encoder.maxInputBufferSizeBytes;
           Uint8List bytes = floats ? _encoder.encodeFloat() : _encoder.encode();
-          yield copyOutput ? new Uint8List.fromList(bytes) : bytes;
+          yield copyOutput ? Uint8List.fromList(bytes) : bytes;
         } else {
           int missingSamples =
               (_encoder.maxInputBufferSizeBytes - _encoder.inputBufferIndex) ~/
                   (floats ? 4 : 2);
-          throw new UnfinishedFrameException._(missingSamples: missingSamples);
+          throw UnfinishedFrameException._(missingSamples: missingSamples);
         }
       }
     } finally {
@@ -283,9 +283,9 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   StreamOpusDecoder.float(
       {@required int sampleRate,
       @required int channels,
-      bool forwardErrorCorrection: false,
-      bool copyOutput: true,
-      bool autoSoftClip: false})
+      bool forwardErrorCorrection = false,
+      bool copyOutput = true,
+      bool autoSoftClip = false})
       : this._(true, Float32List, sampleRate, channels, forwardErrorCorrection,
             copyOutput, autoSoftClip);
 
@@ -299,8 +299,8 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   StreamOpusDecoder.s16le(
       {@required int sampleRate,
       @required int channels,
-      bool forwardErrorCorrection: false,
-      bool copyOutput: true})
+      bool forwardErrorCorrection = false,
+      bool copyOutput = true})
       : this._(false, Int16List, sampleRate, channels, forwardErrorCorrection,
             copyOutput, null);
 
@@ -317,9 +317,9 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
       {@required bool floatOutput,
       @required int sampleRate,
       @required int channels,
-      bool forwardErrorCorrection: false,
-      bool copyOutput: true,
-      bool autoSoftClip: false})
+      bool forwardErrorCorrection = false,
+      bool copyOutput = true,
+      bool autoSoftClip = false})
       : this._(
             floatOutput,
             Uint8List,
@@ -338,7 +338,7 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
       this.copyOutput,
       this.autoSoftClip)
       : this._lastPacketLost = false,
-        this._decoder = new BufferedOpusDecoder(
+        this._decoder = BufferedOpusDecoder(
             sampleRate: sampleRate,
             channels: channels,
             maxOutputBufferSizeBytes:
@@ -358,7 +358,7 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   List<num> _output() {
     Uint8List output = _decoder.outputBuffer;
     if (copyOutput) {
-      output = new Uint8List.fromList(output);
+      output = Uint8List.fromList(output);
     }
     if (_outputType == Float32List) {
       return output.buffer
