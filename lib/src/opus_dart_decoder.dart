@@ -117,15 +117,15 @@ class SimpleOpusDecoder extends OpusDecoder {
     } else {
       frameSize = _maxSamplesPerPacket;
     }
-    int outputSamples = opus_decoder.opus_decode(_opusDecoder, inputNative,
+    int outputSamplesPerChannel = opus_decoder.opus_decode(_opusDecoder, inputNative,
         input.length, outputNative, frameSize, fec ? 1 : 0);
     try {
-      if (outputSamples >= opus_defines.OPUS_OK) {
+      if (outputSamplesPerChannel >= opus_defines.OPUS_OK) {
         _lastPacketDurationMs =
-            _packetDuration(outputSamples, channels, sampleRate);
-        return Int16List.fromList(outputNative.asTypedList(outputSamples));
+            _packetDuration(outputSamplesPerChannel, channels, sampleRate);
+        return Int16List.fromList(outputNative.asTypedList(outputSamplesPerChannel*channels));
       } else {
-        throw OpusException(outputSamples);
+        throw OpusException(outputSamplesPerChannel);
       }
     } finally {
       free(inputNative);
@@ -162,19 +162,19 @@ class SimpleOpusDecoder extends OpusDecoder {
     } else {
       frameSize = _maxSamplesPerPacket;
     }
-    int outputSamples = opus_decoder.opus_decode_float(_opusDecoder,
+    int outputSamplesPerChannel = opus_decoder.opus_decode_float(_opusDecoder,
         inputNative, input.length, outputNative, frameSize, fec ? 1 : 0);
     try {
-      if (outputSamples >= opus_defines.OPUS_OK) {
+      if (outputSamplesPerChannel >= opus_defines.OPUS_OK) {
         _lastPacketDurationMs =
-            _packetDuration(outputSamples, channels, sampleRate);
+            _packetDuration(outputSamplesPerChannel, channels, sampleRate);
         if (autoSoftClip) {
           opus_decoder.opus_pcm_soft_clip(outputNative,
-              outputSamples ~/ channels, channels, _softClipBuffer);
+              outputSamplesPerChannel ~/ channels, channels, _softClipBuffer);
         }
-        return Float32List.fromList(outputNative.asTypedList(outputSamples));
+        return Float32List.fromList(outputNative.asTypedList(outputSamplesPerChannel*channels));
       } else {
-        throw OpusException(outputSamples);
+        throw OpusException(outputSamplesPerChannel);
       }
     } finally {
       free(inputNative);
@@ -384,15 +384,15 @@ class BufferedOpusDecoder extends OpusDecoder {
       inputNative = nullptr;
       frameSize = loss ?? lastPacketDurationMs;
     }
-    int outputSamples = opus_decoder.opus_decode(_opusDecoder, inputNative,
+    int outputSamplesPerChannel = opus_decoder.opus_decode(_opusDecoder, inputNative,
         inputBufferIndex, _outputBuffer.cast<Int16>(), frameSize, fec ? 1 : 0);
-    if (outputSamples >= opus_defines.OPUS_OK) {
+    if (outputSamplesPerChannel >= opus_defines.OPUS_OK) {
       _lastPacketDurationMs =
-          _packetDuration(outputSamples, channels, sampleRate);
-      _outputBufferIndex = 2 * outputSamples;
+          _packetDuration(outputSamplesPerChannel, channels, sampleRate);
+      _outputBufferIndex = 2 * outputSamplesPerChannel * channels;
       return outputBufferAsInt16List;
     } else {
-      throw OpusException(outputSamples);
+      throw OpusException(outputSamplesPerChannel);
     }
   }
 
@@ -415,24 +415,24 @@ class BufferedOpusDecoder extends OpusDecoder {
       inputNative = nullptr;
       frameSize = loss ?? lastPacketDurationMs;
     }
-    int outputSamples = opus_decoder.opus_decode_float(
+    int outputSamplesPerChannel = opus_decoder.opus_decode_float(
         _opusDecoder,
         inputNative,
         inputBufferIndex,
         _outputBuffer.cast<Float>(),
         frameSize,
         fec ? 1 : 0);
-    if (outputSamples >= opus_defines.OPUS_OK) {
+    if (outputSamplesPerChannel >= opus_defines.OPUS_OK) {
       _lastPacketDurationMs =
-          _packetDuration(outputSamples, channels, sampleRate);
-      _outputBufferIndex = 4 * outputSamples;
+          _packetDuration(outputSamplesPerChannel, channels, sampleRate);
+      _outputBufferIndex = 4 * outputSamplesPerChannel * channels;
       if (autoSoftClip) {
         return pcmSoftClipOutputBuffer();
       } else {
         return outputBufferAsFloat32List;
       }
     } else {
-      throw OpusException(outputSamples);
+      throw OpusException(outputSamplesPerChannel);
     }
   }
 

@@ -1,3 +1,8 @@
+## [1.0.3] - 23.07.2020
+
+* libopus 1.3.1
+* Fixed a problem where decoding returns to few samples
+
 ## [1.0.2] - 06.05.2020
 
 * libopus 1.3.1
