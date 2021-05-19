@@ -1,0 +1,12 @@
+name: opus_dart_generation
+version: 1.0.0
+author: EPNW <prokopwieler.hardundsoftware@gmail.com>
+homepage: https://github.com/EPNW/opus_dart
+description: Generates the dart wrappers for opus.
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+dev_dependencies:
+  ffi_tool:
+    git:
+      url: git://github.com/dart-interop/ffi_tool.git
+      ref: v0.3.0

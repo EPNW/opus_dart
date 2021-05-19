@@ -12,7 +12,7 @@ const List<Element> opus_repacketizer = <Element>[
           '''Gets the size of an <code>OpusRepacketizer</code> structure.
 @returns The size in bytes.''',
       name: 'opus_repacketizer_get_size',
-      parameterTypes: [t_void],
+      parameterTypes: [],
       parameterNames: null,
       returnType: t_int),
   Func(
@@ -42,11 +42,12 @@ opus_repacketizer_cat().
           '''Allocates memory and initializes the new repacketizer with
 * opus_repacketizer_init().''',
       name: 'opus_repacketizer_create',
-      parameterTypes: [t_void],
+      parameterTypes: [],
       parameterNames: null,
       returnType: tp_OpusRepacketizer),
   Func(
-      documentation: '''Frees an <code>OpusRepacketizer</code> allocated by
+      documentation:
+          '''Frees an <code>OpusRepacketizer</code> allocated by
 opus_repacketizer_create().
 @param[in] rp <tt>OpusRepacketizer*</tt>: State to be freed.''',
       name: 'opus_repacketizer_destroy',
@@ -54,7 +55,8 @@ opus_repacketizer_create().
       parameterNames: ['rp'],
       returnType: t_void),
   Func(
-      documentation: '''Add a packet to the current repacketizer state.
+      documentation:
+          '''Add a packet to the current repacketizer state.
 This packet must match the configuration of any packets already submitted
 for repacketization since the last call to opus_repacketizer_init().
 This means that it must have the same coding mode, audio bandwidth, frame

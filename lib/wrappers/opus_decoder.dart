@@ -6,7 +6,6 @@
 library opus_decoder;
 
 import 'dart:ffi' as ffi;
-import 'package:ffi/ffi.dart' as ffi;
 
 /// Dynamic library
 ffi.DynamicLibrary _opus_decoder;
@@ -20,11 +19,7 @@ void init(ffi.DynamicLibrary library) {
 /// This contains the complete state of an Opus decoder.
 /// It is position independent and can be freely copied.
 /// @see opus_decoder_create,opus_decoder_init
-class OpusDecoder extends ffi.Struct {
-  static ffi.Pointer<OpusDecoder> allocate() {
-    return ffi.allocate<OpusDecoder>();
-  }
-}
+class OpusDecoder extends ffi.Opaque {}
 
 /// Gets the size of an <code>OpusDecoder</code> structure.
 /// @param [in] channels <tt>int</tt>: Number of channels.

@@ -6,7 +6,6 @@
 library opus_custom;
 
 import 'dart:ffi' as ffi;
-import 'package:ffi/ffi.dart' as ffi;
 
 /// Dynamic library
 ffi.DynamicLibrary _opus_custom;
@@ -20,32 +19,20 @@ void init(ffi.DynamicLibrary library) {
 /// for each stream. It is initialized once at the beginning of the
 /// stream. Do *not* re-initialize the state for every frame.
 /// @brief Encoder state
-class OpusCustomEncoder extends ffi.Struct {
-  static ffi.Pointer<OpusCustomEncoder> allocate() {
-    return ffi.allocate<OpusCustomEncoder>();
-  }
-}
+class OpusCustomEncoder extends ffi.Opaque {}
 
 /// State of the decoder. One decoder state is needed for each stream.
 /// It is initialized once at the beginning of the stream. Do *not*
 /// re-initialize the state for every frame.
 /// @brief Decoder state
-class OpusCustomDecoder extends ffi.Struct {
-  static ffi.Pointer<OpusCustomDecoder> allocate() {
-    return ffi.allocate<OpusCustomDecoder>();
-  }
-}
+class OpusCustomDecoder extends ffi.Opaque {}
 
 /// The mode contains all the information necessary to create an
 /// encoder. Both the encoder and decoder need to be initialized
 /// with exactly the same mode, otherwise the output will be
 /// corrupted.
 /// @brief Mode configuration
-class OpusCustomMode extends ffi.Struct {
-  static ffi.Pointer<OpusCustomMode> allocate() {
-    return ffi.allocate<OpusCustomMode>();
-  }
-}
+class OpusCustomMode extends ffi.Opaque {}
 
 /// Creates a new mode struct. This will be passed to an encoder or
 /// decoder. The mode MUST NOT BE DESTROYED until the encoders and

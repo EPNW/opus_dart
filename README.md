@@ -31,7 +31,8 @@ Variadic (especially the CTL) functions are [not supported](https://github.com/d
 so they are missing, as well as makros.
 The generated bindings can all be found in the /wrappers section and are named after the group they are from.
 Documentation of the bounded functions was copied from the Opus headers (and is thus not very well formated).
-The tool folder contains the code that was used for generation (for sake of completeness; note that ffi_tool ^0.3.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub).
+For sake of completeness the tool folder contains the code that was used for generation (note that ffi_tool ^0.3.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub).
+NOTE: Due to changes in dart 2.12 regarding `dart:ffi` the genreated files currenlty needs some manuall editing in order to work correctly. Futhermore, the current generation process should be reworked, since now a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - is available.
 
 <a name="choosing_firendly"></a>
 ### The Dart Friendly API

@@ -6,7 +6,6 @@
 library opus_repacketizer;
 
 import 'dart:ffi' as ffi;
-import 'package:ffi/ffi.dart' as ffi;
 
 /// Dynamic library
 ffi.DynamicLibrary _opus_repacketizer;
@@ -17,16 +16,12 @@ void init(ffi.DynamicLibrary library) {
 }
 
 /// Opus repacketizer state.
-class OpusRepacketizer extends ffi.Struct {
-  static ffi.Pointer<OpusRepacketizer> allocate() {
-    return ffi.allocate<OpusRepacketizer>();
-  }
-}
+class OpusRepacketizer extends ffi.Opaque {}
 
 /// Gets the size of an <code>OpusRepacketizer</code> structure.
 /// @returns The size in bytes.
 int opus_repacketizer_get_size(
-  void arg0,
+  ffi.Pointer<OpusRepacketizer> arg0,
 ) {
   return _opus_repacketizer_get_size(arg0);
 }
@@ -37,10 +32,10 @@ final _opus_repacketizer_get_size_Dart _opus_repacketizer_get_size =
   'opus_repacketizer_get_size',
 );
 typedef _opus_repacketizer_get_size_C = ffi.Int32 Function(
-  ffi.Void arg0,
+  ffi.Pointer<OpusRepacketizer> arg0,
 );
 typedef _opus_repacketizer_get_size_Dart = int Function(
-  void arg0,
+  ffi.Pointer<OpusRepacketizer> arg0,
 );
 
 /// (Re)initializes a previously allocated repacketizer state.
@@ -79,7 +74,7 @@ typedef _opus_repacketizer_init_Dart = ffi.Pointer<OpusRepacketizer> Function(
 /// Allocates memory and initializes the new repacketizer with
 /// * opus_repacketizer_init().
 ffi.Pointer<OpusRepacketizer> opus_repacketizer_create(
-  void arg0,
+  ffi.Pointer arg0,
 ) {
   return _opus_repacketizer_create(arg0);
 }
@@ -90,10 +85,10 @@ final _opus_repacketizer_create_Dart _opus_repacketizer_create =
   'opus_repacketizer_create',
 );
 typedef _opus_repacketizer_create_C = ffi.Pointer<OpusRepacketizer> Function(
-  ffi.Void arg0,
+  ffi.Pointer arg0,
 );
 typedef _opus_repacketizer_create_Dart = ffi.Pointer<OpusRepacketizer> Function(
-  void arg0,
+  ffi.Pointer arg0,
 );
 
 /// Frees an <code>OpusRepacketizer</code> allocated by

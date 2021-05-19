@@ -1,3 +1,7 @@
+## [1.0.4] - 19.05.2021
+* libopus 1.3.1
+* Temporary fix to work with newer dart versions
+
 ## [1.0.3] - 23.07.2020
 
 * libopus 1.3.1

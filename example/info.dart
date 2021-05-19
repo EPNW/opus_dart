@@ -7,7 +7,8 @@ void main() {
   if (Platform.isWindows) {
     bool x64 = Platform.version.contains('x64');
     if (x64) {
-      lib = new DynamicLibrary.open('path/to/libopus_x64.dll');
+      lib =
+          new DynamicLibrary.open('C:/Users/Eric/Desktop/opus/libopus_x64.dll');
     } else {
       lib = new DynamicLibrary.open('path/to/libopus_x86.dll');
     }

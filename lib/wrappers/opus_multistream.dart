@@ -6,7 +6,6 @@
 library opus_multistream;
 
 import 'dart:ffi' as ffi;
-import 'package:ffi/ffi.dart' as ffi;
 
 /// Dynamic library
 ffi.DynamicLibrary _opus_multistream;
@@ -21,22 +20,14 @@ void init(ffi.DynamicLibrary library) {
 /// It is position independent and can be freely copied.
 /// @see opus_multistream_encoder_create
 /// @see opus_multistream_encoder_init
-class OpusMSEncoder extends ffi.Struct {
-  static ffi.Pointer<OpusMSEncoder> allocate() {
-    return ffi.allocate<OpusMSEncoder>();
-  }
-}
+class OpusMSEncoder extends ffi.Opaque {}
 
 /// Opus multistream decoder state.
 /// This contains the complete state of a multistream Opus decoder.
 /// It is position independent and can be freely copied.
 /// @see opus_multistream_decoder_create
 /// @see opus_multistream_decoder_init
-class OpusMSDecoder extends ffi.Struct {
-  static ffi.Pointer<OpusMSDecoder> allocate() {
-    return ffi.allocate<OpusMSDecoder>();
-  }
-}
+class OpusMSDecoder extends ffi.Opaque {}
 
 /// Gets the size of an OpusMSEncoder structure.
 /// @param streams <tt>int</tt>: The total number of streams to encode from the

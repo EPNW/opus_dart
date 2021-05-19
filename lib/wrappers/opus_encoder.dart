@@ -6,7 +6,6 @@
 library opus_encoder;
 
 import 'dart:ffi' as ffi;
-import 'package:ffi/ffi.dart' as ffi;
 
 /// Dynamic library
 ffi.DynamicLibrary _opus_encoder;
@@ -20,11 +19,7 @@ void init(ffi.DynamicLibrary library) {
 /// This contains the complete state of an Opus encoder.
 /// It is position independent and can be freely copied.
 /// @see opus_encoder_create,opus_encoder_init
-class OpusEncoder extends ffi.Struct {
-  static ffi.Pointer<OpusEncoder> allocate() {
-    return ffi.allocate<OpusEncoder>();
-  }
-}
+class OpusEncoder extends ffi.Opaque {}
 
 /// Gets the size of an <code>OpusEncoder</code> structure.
 /// @param [in] channels <tt>int</tt>: Number of channels.

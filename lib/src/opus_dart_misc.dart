@@ -1,6 +1,7 @@
 import 'dart:ffi';
+import 'dart:convert';
 
-import 'package:ffi/ffi.dart';
+import 'package:ffi/ffi.dart' as ffipackage;
 
 import '../wrappers/opus_libinfo.dart' as opus_libinfo;
 import '../wrappers/opus_encoder.dart' as opus_encoder;
@@ -31,9 +32,41 @@ void initOpus(DynamicLibrary opus) {
   opus_decoder.init(opus);
 }
 
+final Map<Type, int> _sizes = {
+  Double: sizeOf<Double>(),
+  Float: sizeOf<Float>(),
+  Int8: sizeOf<Int8>(),
+  Int16: sizeOf<Int16>(),
+  Int32: sizeOf<Int32>(),
+  Int64: sizeOf<Int64>(),
+  IntPtr: sizeOf<IntPtr>(),
+  Pointer: sizeOf<Pointer>(),
+  Uint8: sizeOf<Uint8>(),
+  Uint16: sizeOf<Uint16>(),
+  Uint32: sizeOf<Uint32>(),
+  Uint64: sizeOf<Uint64>()
+};
+
+Pointer<T> allocate<T extends NativeType>({int count}) {
+  int byteCount = count * _sizes[T];
+  return ffipackage.malloc.allocate<T>(byteCount);
+}
+
+void free(Pointer<NativeType> pointer) {
+  ffipackage.malloc.free(pointer);
+}
+
 /// Returns the version of the native libopus library.
 String getOpusVersion() {
-  return Utf8.fromUtf8(opus_libinfo.opus_get_version_string());
+  return _asString(opus_libinfo.opus_get_version_string());
+}
+
+String _asString(Pointer<Uint8> pointer) {
+  int i = 0;
+  while (pointer.elementAt(i).value != 0) {
+    i++;
+  }
+  return utf8.decode(pointer.asTypedList(i));
 }
 
 /// Thrown when a native exception occurs.
@@ -42,7 +75,7 @@ class OpusException implements Exception {
   const OpusException(this.errorCode);
   @override
   String toString() {
-    String error = Utf8.fromUtf8(opus_libinfo.opus_strerror(errorCode));
+    String error = _asString(opus_libinfo.opus_strerror(errorCode));
     return 'OpusException $errorCode: $error';
   }
 }

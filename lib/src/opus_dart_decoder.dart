@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
 import '../wrappers/opus_decoder.dart' as opus_decoder;
 import '../wrappers/opus_defines.dart' as opus_defines;
@@ -117,13 +116,14 @@ class SimpleOpusDecoder extends OpusDecoder {
     } else {
       frameSize = _maxSamplesPerPacket;
     }
-    int outputSamplesPerChannel = opus_decoder.opus_decode(_opusDecoder, inputNative,
-        input.length, outputNative, frameSize, fec ? 1 : 0);
+    int outputSamplesPerChannel = opus_decoder.opus_decode(_opusDecoder,
+        inputNative, input.length, outputNative, frameSize, fec ? 1 : 0);
     try {
       if (outputSamplesPerChannel >= opus_defines.OPUS_OK) {
         _lastPacketDurationMs =
             _packetDuration(outputSamplesPerChannel, channels, sampleRate);
-        return Int16List.fromList(outputNative.asTypedList(outputSamplesPerChannel*channels));
+        return Int16List.fromList(
+            outputNative.asTypedList(outputSamplesPerChannel * channels));
       } else {
         throw OpusException(outputSamplesPerChannel);
       }
@@ -172,7 +172,8 @@ class SimpleOpusDecoder extends OpusDecoder {
           opus_decoder.opus_pcm_soft_clip(outputNative,
               outputSamplesPerChannel ~/ channels, channels, _softClipBuffer);
         }
-        return Float32List.fromList(outputNative.asTypedList(outputSamplesPerChannel*channels));
+        return Float32List.fromList(
+            outputNative.asTypedList(outputSamplesPerChannel * channels));
       } else {
         throw OpusException(outputSamplesPerChannel);
       }
@@ -384,8 +385,13 @@ class BufferedOpusDecoder extends OpusDecoder {
       inputNative = nullptr;
       frameSize = loss ?? lastPacketDurationMs;
     }
-    int outputSamplesPerChannel = opus_decoder.opus_decode(_opusDecoder, inputNative,
-        inputBufferIndex, _outputBuffer.cast<Int16>(), frameSize, fec ? 1 : 0);
+    int outputSamplesPerChannel = opus_decoder.opus_decode(
+        _opusDecoder,
+        inputNative,
+        inputBufferIndex,
+        _outputBuffer.cast<Int16>(),
+        frameSize,
+        fec ? 1 : 0);
     if (outputSamplesPerChannel >= opus_defines.OPUS_OK) {
       _lastPacketDurationMs =
           _packetDuration(outputSamplesPerChannel, channels, sampleRate);

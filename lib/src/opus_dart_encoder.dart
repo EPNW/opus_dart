@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
 import '../wrappers/opus_encoder.dart' as opus_encoder;
 import '../wrappers/opus_defines.dart' as opus_defines;

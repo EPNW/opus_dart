@@ -6,7 +6,6 @@
 library opus_projection;
 
 import 'dart:ffi' as ffi;
-import 'package:ffi/ffi.dart' as ffi;
 
 /// Dynamic library
 ffi.DynamicLibrary _opus_projection;
@@ -20,22 +19,14 @@ void init(ffi.DynamicLibrary library) {
 /// * This contains the complete state of a projection Opus encoder.
 /// * It is position independent and can be freely copied.
 /// * @see opus_projection_ambisonics_encoder_create
-class OpusProjectionEncoder extends ffi.Struct {
-  static ffi.Pointer<OpusProjectionEncoder> allocate() {
-    return ffi.allocate<OpusProjectionEncoder>();
-  }
-}
+class OpusProjectionEncoder extends ffi.Opaque {}
 
 /// Opus projection decoder state.
 /// This contains the complete state of a projection Opus decoder.
 /// It is position independent and can be freely copied.
 /// @see opus_projection_decoder_create
 /// @see opus_projection_decoder_init
-class OpusProjectionDecoder extends ffi.Struct {
-  static ffi.Pointer<OpusProjectionDecoder> allocate() {
-    return ffi.allocate<OpusProjectionDecoder>();
-  }
-}
+class OpusProjectionDecoder extends ffi.Opaque {}
 
 /// Gets the size of an OpusProjectionEncoder structure.
 /// @param channels <tt>int</tt>: The total number of input channels to encode.
