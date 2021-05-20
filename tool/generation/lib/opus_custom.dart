@@ -3,31 +3,31 @@ import 'package:ffi_tool/c.dart';
 import 'types.dart';
 
 const List<Element> opus_custom = <Element>[
-  Struct(
-      documentation:
-          '''Contains the state of an encoder. One encoder state is needed
+  Opaque(
+    documentation:
+        '''Contains the state of an encoder. One encoder state is needed
 for each stream. It is initialized once at the beginning of the
 stream. Do *not* re-initialize the state for every frame.
 @brief Encoder state''',
-      name: 'OpusCustomEncoder',
-      fields: []),
-  Struct(
-      documentation:
-          '''State of the decoder. One decoder state is needed for each stream.
+    name: 'OpusCustomEncoder',
+  ),
+  Opaque(
+    documentation:
+        '''State of the decoder. One decoder state is needed for each stream.
 It is initialized once at the beginning of the stream. Do *not*
 re-initialize the state for every frame.
 @brief Decoder state''',
-      name: 'OpusCustomDecoder',
-      fields: []),
-  Struct(
-      documentation:
-          '''The mode contains all the information necessary to create an
+    name: 'OpusCustomDecoder',
+  ),
+  Opaque(
+    documentation:
+        '''The mode contains all the information necessary to create an
 encoder. Both the encoder and decoder need to be initialized
 with exactly the same mode, otherwise the output will be
 corrupted.
 @brief Mode configuration''',
-      name: 'OpusCustomMode',
-      fields: []),
+    name: 'OpusCustomMode',
+  ),
   Func(
       documentation:
           '''Creates a new mode struct. This will be passed to an encoder or
@@ -52,7 +52,8 @@ decoders using this mode are destroyed as well.
       parameterNames: ['mode'],
       returnType: t_void),
   Func(
-      documentation: '''Gets the size of an OpusCustomEncoder structure.
+      documentation:
+          '''Gets the size of an OpusCustomEncoder structure.
 @param [in] mode <tt>OpusCustomMode *</tt>: Mode configuration
 @param [in] channels <tt>int</tt>: Number of channels
 @returns size''',
@@ -61,7 +62,8 @@ decoders using this mode are destroyed as well.
       parameterNames: ['mode', 'channels'],
       returnType: t_int),
   Func(
-      documentation: '''Initializes a previously allocated encoder state
+      documentation:
+          '''Initializes a previously allocated encoder state
 The memory pointed to by st must be the size returned by opus_custom_encoder_get_size.
 This is intended for applications which use their own allocator instead of malloc.
 @see opus_custom_encoder_create(),opus_custom_encoder_get_size()
@@ -91,14 +93,16 @@ decoder)
       parameterNames: ['mode', 'channels', 'error'],
       returnType: tp_OpusCustomEncoder),
   Func(
-      documentation: '''Destroys a an encoder state.
+      documentation:
+          '''Destroys a an encoder state.
 @param[in] st <tt>OpusCustomEncoder*</tt>: State to be freed.''',
       name: 'opus_custom_encoder_destroy',
       parameterTypes: [tp_OpusCustomEncoder],
       parameterNames: ['st'],
       returnType: t_void),
   Func(
-      documentation: '''Encodes a frame of audio.
+      documentation:
+          '''Encodes a frame of audio.
 @param [in] st <tt>OpusCustomEncoder*</tt>: Encoder state
 @param [in] pcm <tt>float*</tt>: PCM audio in float format, with a normal range of +/-1.0.
 Samples with a range beyond +/-1.0 are supported but will
@@ -131,7 +135,8 @@ decoding is possible.''',
       ],
       returnType: t_int),
   Func(
-      documentation: '''Encodes a frame of audio.
+      documentation:
+          '''Encodes a frame of audio.
 @param [in] st <tt>OpusCustomEncoder*</tt>: Encoder state
 @param [in] pcm <tt>opus_int16*</tt>: PCM audio in signed 16-bit format (native endian).
 There must be exactly frame_size samples per channel.
@@ -160,7 +165,8 @@ decoding is possible.''',
       ],
       returnType: t_int),
   Func(
-      documentation: '''Gets the size of an OpusCustomDecoder structure.
+      documentation:
+          '''Gets the size of an OpusCustomDecoder structure.
 @param [in] mode <tt>OpusCustomMode *</tt>: Mode configuration
 @param [in] channels <tt>int</tt>: Number of channels
 @returns size''',
@@ -169,7 +175,8 @@ decoding is possible.''',
       parameterNames: ['mode', 'channels'],
       returnType: t_int),
   Func(
-      documentation: '''Initializes a previously allocated decoder state
+      documentation:
+          '''Initializes a previously allocated decoder state
 The memory pointed to by st must be the size returned by opus_custom_decoder_get_size.
 This is intended for applications which use their own allocator instead of malloc.
 @see opus_custom_decoder_create(),opus_custom_decoder_get_size()
@@ -198,14 +205,16 @@ stream (must be the same characteristics as used for the encoder)
       parameterNames: ['mode', 'channels', 'error'],
       returnType: tp_OpusCustomDecoder),
   Func(
-      documentation: '''Destroys a an decoder state.
+      documentation:
+          '''Destroys a an decoder state.
 @param[in] st <tt>OpusCustomDecoder*</tt>: State to be freed.''',
       name: 'opus_custom_decoder_destroy',
       parameterTypes: [tp_OpusCustomDecoder],
       parameterNames: ['st'],
       returnType: t_void),
   Func(
-      documentation: '''Decode an opus custom frame with floating point output
+      documentation:
+          '''Decode an opus custom frame with floating point output
 @param [in] st <tt>OpusCustomDecoder*</tt>: Decoder state
 @param [in] data <tt>char*</tt>: Input payload. Use a NULL pointer to indicate packet loss
 @param [in] len <tt>int</tt>: Number of bytes in payload
@@ -224,7 +233,8 @@ is frame_size*channels*sizeof(float)
       parameterNames: ['st', 'data', 'len', 'pcm', 'frame_size'],
       returnType: t_int),
   Func(
-      documentation: '''Decode an opus custom frame
+      documentation:
+          '''Decode an opus custom frame
 @param [in] st <tt>OpusCustomDecoder*</tt>: Decoder state
 @param [in] data <tt>char*</tt>: Input payload. Use a NULL pointer to indicate packet loss
 @param [in] len <tt>int</tt>: Number of bytes in payload

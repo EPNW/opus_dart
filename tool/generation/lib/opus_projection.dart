@@ -3,23 +3,26 @@ import 'package:ffi_tool/c.dart';
 import 'types.dart';
 
 const List<Element> opus_projection = <Element>[
-  Struct(
-      documentation: '''Opus projection encoder state.
+  Opaque(
+    documentation:
+        '''Opus projection encoder state.
 * This contains the complete state of a projection Opus encoder.
 * It is position independent and can be freely copied.
 * @see opus_projection_ambisonics_encoder_create''',
-      name: 'OpusProjectionEncoder',
-      fields: []),
-  Struct(
-      documentation: '''Opus projection decoder state.
+    name: 'OpusProjectionEncoder',
+  ),
+  Opaque(
+    documentation:
+        '''Opus projection decoder state.
 This contains the complete state of a projection Opus decoder.
 It is position independent and can be freely copied.
 @see opus_projection_decoder_create
 @see opus_projection_decoder_init''',
-      name: 'OpusProjectionDecoder',
-      fields: []),
+    name: 'OpusProjectionDecoder',
+  ),
   Func(
-      documentation: '''Gets the size of an OpusProjectionEncoder structure.
+      documentation:
+          '''Gets the size of an OpusProjectionEncoder structure.
 @param channels <tt>int</tt>: The total number of input channels to encode.
 This must be no more than 255.
 @param mapping_family <tt>int</tt>: The mapping family to use for selecting
@@ -31,7 +34,8 @@ the appropriate projection.
       parameterNames: ['channels', 'mapping_family'],
       returnType: t_opus_int32),
   Func(
-      documentation: '''Allocates and initializes a projection encoder state.
+      documentation:
+          '''Allocates and initializes a projection encoder state.
 Call opus_projection_encoder_destroy() to release
 this object when finished.
 @param Fs <tt>opus_int32</tt>: Sampling rate of the input signal (in Hz).
@@ -146,7 +150,8 @@ on failure.''',
       ],
       returnType: t_int),
   Func(
-      documentation: '''Encodes a projection Opus frame.
+      documentation:
+          '''Encodes a projection Opus frame.
 @param st <tt>OpusProjectionEncoder*</tt>: Projection encoder state.
 @param[in] pcm <tt>const opus_int16*</tt>: The input signal as interleaved
 samples.
@@ -234,7 +239,8 @@ negative error code (see @ref opus_errorcodes) on failure.''',
       parameterNames: ['st', 'pcm', 'frame_size', 'data', 'max_data_bytes'],
       returnType: t_int),
   Func(
-      documentation: '''Frees an <code>OpusProjectionEncoder</code> allocated by
+      documentation:
+          '''Frees an <code>OpusProjectionEncoder</code> allocated by
 opus_projection_ambisonics_encoder_create().
 @param st <tt>OpusProjectionEncoder*</tt>: Projection encoder state to be freed.''',
       name: 'opus_projection_encoder_destroy',
@@ -264,7 +270,8 @@ more than 255.
       parameterNames: ['channels', 'streams', 'coupled_streams'],
       returnType: t_opus_int32),
   Func(
-      documentation: '''Allocates and initializes a projection decoder state.
+      documentation:
+          '''Allocates and initializes a projection decoder state.
 Call opus_projection_decoder_destroy() to release
 this object when finished.
 @param Fs <tt>opus_int32</tt>: Sampling rate to decode at (in Hz).
@@ -378,7 +385,8 @@ on failure.''',
       ],
       returnType: t_int),
   Func(
-      documentation: '''Decode a projection Opus packet.
+      documentation:
+          '''Decode a projection Opus packet.
 @param st <tt>OpusProjectionDecoder*</tt>: Projection decoder state.
 @param[in] data <tt>const unsigned char*</tt>: Input payload.
 Use a <code>NULL</code>
@@ -459,7 +467,8 @@ decoded as if it were lost.
       parameterNames: ['st', 'data', 'len', 'pcm', 'frame_size', 'decode_fec'],
       returnType: t_int),
   Func(
-      documentation: '''Frees an <code>OpusProjectionDecoder</code> allocated by
+      documentation:
+          '''Frees an <code>OpusProjectionDecoder</code> allocated by
 opus_projection_decoder_create().
 @param st <tt>OpusProjectionDecoder</tt>: Projection decoder state to be freed.''',
       name: 'opus_projection_decoder_destroy',

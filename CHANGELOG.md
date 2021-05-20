@@ -1,3 +1,7 @@
+## [2.0.0] - 20.05.2021
+* libopus 1.3.1
+* Migrated to null safety
+
 ## [1.0.4] - 19.05.2021
 * libopus 1.3.1
 * Temporary fix to work with newer dart versions

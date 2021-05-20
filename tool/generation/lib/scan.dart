@@ -1,6 +1,6 @@
 /// I used this code to parse some of the headerfiles that you receive
 /// in the include directory when you compile opus. I copied the headers
-/// and did some manuall preprocessing like deleting some comments and 
+/// and did some manuall preprocessing like deleting some comments and
 /// other lines. Thus I renamed theme to ".source". The headerfiles for
 /// the encoder and decoder where processed manually, so they are not
 /// listed here. The result of this operations is not the binding code,
@@ -126,7 +126,7 @@ class StructDefinition with JsonMap {
 }
 
 class VoidParameterLine extends ParameterLine {
-  const VoidParameterLine() : super('void', null, null);
+  const VoidParameterLine() : super('void', false, 'null');
 }
 
 class ParameterLine with JsonMap {
@@ -205,12 +205,13 @@ String genSource(String name, List<JsonMap> elements) {
       parameterTypes: $parameterTypes,
 	    parameterNames: $parameterNames,
       returnType: $rt)''';
-    } else {
+    } else if (element is StructDefinition) {
       StructDefinition struct = element;
-      return '''Struct(
+      return '''Opaque(
       documentation: \'\'\'${struct.documentation}\'\'\',
-      name: '${struct.name}',
-      fields: [])''';
+      name: '${struct.name}')''';
+    } else {
+      throw new ArgumentError();
     }
   }).join(',');
   return '''import 'package:ffi_tool/c.dart';
@@ -224,7 +225,7 @@ const List<Element> $name = <Element>[
 
 String returnType(ParameterLine line) {
   String key = (line.isPointer ? '*' : '') + line.type;
-  String type = reverseTypeMap[key];
+  String? type = reverseTypeMap[key];
   if (type != null) {
     return type;
   } else {

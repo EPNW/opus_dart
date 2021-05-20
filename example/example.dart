@@ -24,6 +24,8 @@ void init() {
     }
   } else if (Platform.isLinux) {
     lib = new DynamicLibrary.open('/usr/local/lib/libopus.so');
+  } else {
+    throw new UnsupportedError('This programm does not support this platform!');
   }
   initOpus(lib);
   print(getOpusVersion());
@@ -31,7 +33,7 @@ void init() {
 
 /// Get a stream, encode it and decode it, then save it to the harddrive
 /// with a wav header.
-Future<void> example() async {
+Future<File> example() async {
   const int sampleRate = 16000;
   const int channels = 1;
   Stream<List<int>> input = await new File('s16le_16000hz_mono.raw').openRead();
@@ -47,6 +49,7 @@ Future<void> example() async {
           application: Application.audio,
           copyOutput: true,
           fillUpLastFrame: true))
+      .cast<Uint8List?>()
       .transform(new StreamOpusDecoder.bytes(
           floatOutput: false,
           sampleRate: sampleRate,
@@ -59,7 +62,7 @@ Future<void> example() async {
   //Write the wav header
   RandomAccessFile r = await file.open(mode: FileMode.append);
   await r.setPosition(0);
-  Uint8List header=wavHeader(
+  Uint8List header = wavHeader(
       channels: channels,
       sampleRate: sampleRate,
       fileSize: await file.length());
@@ -70,14 +73,15 @@ Future<void> example() async {
 
 const int wavHeaderSize = 44;
 
-Uint8List wavHeader({int sampleRate, int channels, int fileSize}) {
+Uint8List wavHeader(
+    {required int sampleRate, required int channels, required int fileSize}) {
   const int sampleBits = 16; //We know this since we used opus
   const Endian endian = Endian.little;
   final int frameSize = ((sampleBits + 7) ~/ 8) * channels;
   ByteData data = new ByteData(wavHeaderSize);
   data.setUint32(4, fileSize - 4, endian);
   data.setUint32(16, 16, endian);
-  data.setUint16(20, 1,endian);
+  data.setUint16(20, 1, endian);
   data.setUint16(22, channels, endian);
   data.setUint32(24, sampleRate, endian);
   data.setUint32(28, sampleRate * frameSize, endian);

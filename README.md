@@ -31,8 +31,7 @@ Variadic (especially the CTL) functions are [not supported](https://github.com/d
 so they are missing, as well as makros.
 The generated bindings can all be found in the /wrappers section and are named after the group they are from.
 Documentation of the bounded functions was copied from the Opus headers (and is thus not very well formated).
-For sake of completeness the tool folder contains the code that was used for generation (note that ffi_tool ^0.3.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub).
-NOTE: Due to changes in dart 2.12 regarding `dart:ffi` the genreated files currenlty needs some manuall editing in order to work correctly. Futhermore, the current generation process should be reworked, since now a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - is available.
+For sake of completeness the tool folder contains the code that was used for generation. NOTE that ffi_tool ^0.4.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub. Also, since in the meantime a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - was created, this should be used to generate bindings for further opus versions.
 
 <a name="choosing_firendly"></a>
 ### The Dart Friendly API
@@ -67,13 +66,16 @@ functions with the same signature. For example, you would import them using
 import 'package:opus_dart/wrappers/opus_libinfo.dart' as opus_libinfo;
 import 'package:opus_dart/wrappers/opus_custom.dart' as opus_custom;
 ```
-and then you can call in your main function
+and then you can call in your startup logic
 ```
+late final opus_libinfo.FunctionsAndGlobals libinfo;
+late final opus_custom.FunctionsAndGlobals custom;
 void main(){
-    opus_libinfo.init(lib);
-    opus_custom.init(lib);
+    libinfo=opus_libinfo.FunctionsAndGlobals(lib);
+    custom=opus_custom.FunctionsAndGlobals(lib);
 }
 ```
+Finally, you can use the objects `libinfo` and `custom` to access the functions and globals.
 
 <a name="init_friendly"></a>
 ### The Dart Friendly API

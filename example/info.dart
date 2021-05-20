@@ -14,6 +14,8 @@ void main() {
     }
   } else if (Platform.isLinux) {
     lib = new DynamicLibrary.open('/usr/local/lib/libopus.so');
+  } else {
+    throw new UnsupportedError('This programm does not support this platform!');
   }
   initOpus(lib);
   print(getOpusVersion());

@@ -4,6 +4,6 @@ library opus_dart;
 
 export 'src/opus_dart_decoder.dart';
 export 'src/opus_dart_encoder.dart';
-export 'src/opus_dart_misc.dart' hide allocate, free;
+export 'src/opus_dart_misc.dart' hide allocate, free, ApiObject, opus;
 export 'src/opus_dart_packet.dart';
 export 'src/opus_dart_streaming.dart';

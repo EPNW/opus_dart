@@ -3,10 +3,10 @@ import 'package:ffi_tool/c.dart';
 import 'types.dart';
 
 const List<Element> opus_repacketizer = <Element>[
-  Struct(
-      documentation: '''Opus repacketizer state.''',
-      name: 'OpusRepacketizer',
-      fields: []),
+  Opaque(
+    documentation: '''Opus repacketizer state.''',
+    name: 'OpusRepacketizer',
+  ),
   Func(
       documentation:
           '''Gets the size of an <code>OpusRepacketizer</code> structure.

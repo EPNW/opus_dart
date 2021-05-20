@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
-
 import 'opus_dart_encoder.dart';
 import 'opus_dart_decoder.dart';
 import 'opus_dart_misc.dart';
@@ -51,8 +49,6 @@ class StreamOpusEncoder<T extends num>
         return 40 * samplesPerMs;
       case FrameTime.ms60:
         return 60 * samplesPerMs;
-      default:
-        return null;
     }
   }
 
@@ -91,10 +87,10 @@ class StreamOpusEncoder<T extends num>
   ///
   /// For more information of the parameters see the documentation of [fillUpLastFrame] and [copyOutput].
   StreamOpusEncoder.float(
-      {@required FrameTime frameTime,
-      @required int sampleRate,
-      @required int channels,
-      @required Application application,
+      {required FrameTime frameTime,
+      required int sampleRate,
+      required int channels,
+      required Application application,
       bool fillUpLastFrame = true,
       bool copyOutput = true})
       : this._(frameTime, true, Float32List, sampleRate, channels, application,
@@ -105,10 +101,10 @@ class StreamOpusEncoder<T extends num>
   ///
   /// For more information of the parameters see the documentation of [fillUpLastFrame] and [copyOutput].
   StreamOpusEncoder.s16le(
-      {@required FrameTime frameTime,
-      @required int sampleRate,
-      @required int channels,
-      @required Application application,
+      {required FrameTime frameTime,
+      required int sampleRate,
+      required int channels,
+      required Application application,
       bool fillUpLastFrame = true,
       bool copyOutput = true})
       : this._(frameTime, false, Int16List, sampleRate, channels, application,
@@ -123,11 +119,11 @@ class StreamOpusEncoder<T extends num>
   ///
   /// For more information of the parameters see the documentation of [fillUpLastFrame] and [copyOutput].
   StreamOpusEncoder.bytes(
-      {@required FrameTime frameTime,
-      @required bool floatInput,
-      @required int sampleRate,
-      @required int channels,
-      @required Application application,
+      {required FrameTime frameTime,
+      required bool floatInput,
+      required int sampleRate,
+      required int channels,
+      required Application application,
       bool fillUpLastFrame = true,
       bool copyOutput = true})
       : this._(frameTime, floatInput, Uint8List, sampleRate, channels,
@@ -222,7 +218,7 @@ class StreamOpusEncoder<T extends num>
 class UnfinishedFrameException implements Exception {
   /// The amount of samples that are missing for the final frame.
   final int missingSamples;
-  const UnfinishedFrameException._({@required this.missingSamples});
+  const UnfinishedFrameException._({required this.missingSamples});
 
   @override
   String toString() {
@@ -241,7 +237,7 @@ class UnfinishedFrameException implements Exception {
 /// a stream of [Float32List], [Int16List] or [Uint8List], so it's safe to
 /// cast the resulting stream to the corresponding  format.
 
-class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
+class StreamOpusDecoder extends StreamTransformerBase<Uint8List?, List<num>> {
   /// If forward error correction (fec) should be enabled.
   ///
   /// This is only possible, if the input packets were encoded by an
@@ -281,8 +277,8 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   ///
   /// For more information of the parameters see the documentation of [forwardErrorCorrection], [copyOutput] and [autoSoftClip].
   StreamOpusDecoder.float(
-      {@required int sampleRate,
-      @required int channels,
+      {required int sampleRate,
+      required int channels,
       bool forwardErrorCorrection = false,
       bool copyOutput = true,
       bool autoSoftClip = false})
@@ -297,12 +293,12 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   /// This constructor does not have an [autoSoftClip] parameter, since softclipping is only possible when decoding
   /// to float output.
   StreamOpusDecoder.s16le(
-      {@required int sampleRate,
-      @required int channels,
+      {required int sampleRate,
+      required int channels,
       bool forwardErrorCorrection = false,
       bool copyOutput = true})
       : this._(false, Int16List, sampleRate, channels, forwardErrorCorrection,
-            copyOutput, null);
+            copyOutput, false);
 
   /// Creates a new StreamOpusDecoder with [sampleRate] and [channels]
   /// that outputs plain bytes (in form of [Uint8List]), so it's safe to cast the output stream.
@@ -314,9 +310,9 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   /// If the decoded output is not in float format ([floatOutput] is `false`) [autoSoftClip] is forced to `null`,
   /// since you can not softclip s16le output.
   StreamOpusDecoder.bytes(
-      {@required bool floatOutput,
-      @required int sampleRate,
-      @required int channels,
+      {required bool floatOutput,
+      required int sampleRate,
+      required int channels,
       bool forwardErrorCorrection = false,
       bool copyOutput = true,
       bool autoSoftClip = false})
@@ -327,7 +323,7 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
             channels,
             forwardErrorCorrection,
             copyOutput,
-            floatOutput == true ? autoSoftClip : null);
+            floatOutput == true ? autoSoftClip : false);
 
   StreamOpusDecoder._(
       this.floats,
@@ -379,8 +375,8 @@ class StreamOpusDecoder extends StreamTransformerBase<Uint8List, List<num>> {
   /// depending on what constructor was used, so it is safe to use the
   /// returned streams `cast` method to obtain the stream in that format.
   @override
-  Stream<List<num>> bind(Stream<Uint8List> stream) async* {
-    await for (Uint8List packet in stream) {
+  Stream<List<num>> bind(Stream<Uint8List?> stream) async* {
+    await for (Uint8List? packet in stream) {
       if (packet == null) {
         if (forwardErrorCorrection) {
           _decoder.inputBufferIndex = 0;

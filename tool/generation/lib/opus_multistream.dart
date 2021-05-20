@@ -3,24 +3,27 @@ import 'package:ffi_tool/c.dart';
 import 'types.dart';
 
 const List<Element> opus_multistream = <Element>[
-  Struct(
-      documentation: '''Opus multistream encoder state.
+  Opaque(
+    documentation:
+        '''Opus multistream encoder state.
 This contains the complete state of a multistream Opus encoder.
 It is position independent and can be freely copied.
 @see opus_multistream_encoder_create
 @see opus_multistream_encoder_init''',
-      name: 'OpusMSEncoder',
-      fields: []),
-  Struct(
-      documentation: '''Opus multistream decoder state.
+    name: 'OpusMSEncoder',
+  ),
+  Opaque(
+    documentation:
+        '''Opus multistream decoder state.
 This contains the complete state of a multistream Opus decoder.
 It is position independent and can be freely copied.
 @see opus_multistream_decoder_create
 @see opus_multistream_decoder_init''',
-      name: 'OpusMSDecoder',
-      fields: []),
+    name: 'OpusMSDecoder',
+  ),
   Func(
-      documentation: '''Gets the size of an OpusMSEncoder structure.
+      documentation:
+          '''Gets the size of an OpusMSEncoder structure.
 @param streams <tt>int</tt>: The total number of streams to encode from the
 input.
 This must be no more than 255.
@@ -45,7 +48,8 @@ more than 255.
       parameterNames: ['channels', 'mapping_family'],
       returnType: t_opus_int32),
   Func(
-      documentation: '''Allocates and initializes a multistream encoder state.
+      documentation:
+          '''Allocates and initializes a multistream encoder state.
 Call opus_multistream_encoder_destroy() to release
 this object when finished.
 @param Fs <tt>opus_int32</tt>: Sampling rate of the input signal (in Hz).
@@ -227,7 +231,8 @@ on failure.''',
       ],
       returnType: t_int),
   Func(
-      documentation: '''Encodes a multistream Opus frame.
+      documentation:
+          '''Encodes a multistream Opus frame.
 @param st <tt>OpusMSEncoder*</tt>: Multistream encoder state.
 @param[in] pcm <tt>const opus_int16*</tt>: The input signal as interleaved
 samples.
@@ -315,7 +320,8 @@ negative error code (see @ref opus_errorcodes) on failure.''',
       parameterNames: ['st', 'pcm', 'frame_size', 'data', 'max_data_bytes'],
       returnType: t_int),
   Func(
-      documentation: '''Frees an <code>OpusMSEncoder</code> allocated by
+      documentation:
+          '''Frees an <code>OpusMSEncoder</code> allocated by
 opus_multistream_encoder_create().
 @param st <tt>OpusMSEncoder*</tt>: Multistream encoder state to be freed.''',
       name: 'opus_multistream_encoder_destroy',
@@ -343,7 +349,8 @@ more than 255.
       parameterNames: ['streams', 'coupled_streams'],
       returnType: t_opus_int32),
   Func(
-      documentation: '''Allocates and initializes a multistream decoder state.
+      documentation:
+          '''Allocates and initializes a multistream decoder state.
 Call opus_multistream_decoder_destroy() to release
 this object when finished.
 @param Fs <tt>opus_int32</tt>: Sampling rate to decode at (in Hz).
@@ -390,7 +397,8 @@ failure.''',
       ],
       returnType: tp_OpusMSDecoder),
   Func(
-      documentation: '''Intialize a previously allocated decoder state object.
+      documentation:
+          '''Intialize a previously allocated decoder state object.
 The memory pointed to by \a st must be at least the size returned by
 opus_multistream_encoder_get_size().
 This is intended for applications which use their own allocator instead of
@@ -442,7 +450,8 @@ on failure.''',
       ],
       returnType: t_int),
   Func(
-      documentation: '''Decode a multistream Opus packet.
+      documentation:
+          '''Decode a multistream Opus packet.
 @param st <tt>OpusMSDecoder*</tt>: Multistream decoder state.
 @param[in] data <tt>const unsigned char*</tt>: Input payload.
 Use a <code>NULL</code>
@@ -523,7 +532,8 @@ decoded as if it were lost.
       parameterNames: ['st', 'data', 'len', 'pcm', 'frame_size', 'decode_fec'],
       returnType: t_int),
   Func(
-      documentation: '''Frees an <code>OpusMSDecoder</code> allocated by
+      documentation:
+          '''Frees an <code>OpusMSDecoder</code> allocated by
 opus_multistream_decoder_create().
 @param st <tt>OpusMSDecoder</tt>: Multistream decoder state to be freed.''',
       name: 'opus_multistream_decoder_destroy',

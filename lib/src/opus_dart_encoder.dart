@@ -1,6 +1,5 @@
 import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:meta/meta.dart';
 import '../wrappers/opus_encoder.dart' as opus_encoder;
 import '../wrappers/opus_defines.dart' as opus_defines;
 import 'opus_dart_misc.dart';
@@ -29,13 +28,13 @@ class SimpleOpusEncoder extends OpusEncoder {
   /// Creates an new [SimpleOpusEncoder] based on the [sampleRate], [channels] and [application] type.
   /// See the matching fields for more information about these parameters.
   factory SimpleOpusEncoder(
-      {@required int sampleRate,
-      @required int channels,
-      @required Application application}) {
+      {required int sampleRate,
+      required int channels,
+      required Application application}) {
     Pointer<Int32> error = allocate<Int32>(count: 1);
-    Pointer<opus_encoder.OpusEncoder> encoder =
-        opus_encoder.opus_encoder_create(
-            sampleRate, channels, _applicationCodes[application], error);
+    Pointer<opus_encoder.OpusEncoder> encoder = opus.encoder
+        .opus_encoder_create(
+            sampleRate, channels, _applicationCodes[application]!, error);
     try {
       if (error.value == opus_defines.OPUS_OK) {
         return SimpleOpusEncoder._(encoder, sampleRate, channels, application);
@@ -62,14 +61,13 @@ class SimpleOpusEncoder extends OpusEncoder {
   /// The returnes list contains the bytes of the encoded opus packet.
   ///
   /// [input] and the returned list are copied to and respectively from native memory.
-  @override
   Uint8List encode(
-      {@required Int16List input, int maxOutputSizeBytes = maxDataBytes}) {
+      {required Int16List input, int maxOutputSizeBytes = maxDataBytes}) {
     Pointer<Int16> inputNative = allocate<Int16>(count: input.length);
     inputNative.asTypedList(input.length).setAll(0, input);
     Pointer<Uint8> outputNative = allocate<Uint8>(count: maxOutputSizeBytes);
     int sampleCountPerChannel = input.length ~/ channels;
-    int outputLength = opus_encoder.opus_encode(_opusEncoder, inputNative,
+    int outputLength = opus.encoder.opus_encode(_opusEncoder, inputNative,
         sampleCountPerChannel, outputNative, maxOutputSizeBytes);
     try {
       if (outputLength >= opus_defines.OPUS_OK) {
@@ -88,14 +86,13 @@ class SimpleOpusEncoder extends OpusEncoder {
   /// Encodes a frame of pcm data, stored as Float32List.
   ///
   /// This method behaves just as [encode], so see there for more information.
-  @override
   Uint8List encodeFloat(
-      {@required Float32List input, int maxOutputSizeBytes = maxDataBytes}) {
+      {required Float32List input, int maxOutputSizeBytes = maxDataBytes}) {
     Pointer<Float> inputNative = allocate<Float>(count: input.length);
     inputNative.asTypedList(input.length).setAll(0, input);
     Pointer<Uint8> outputNative = allocate<Uint8>(count: maxOutputSizeBytes);
     int sampleCountPerChannel = input.length ~/ channels;
-    int outputLength = opus_encoder.opus_encode_float(_opusEncoder, inputNative,
+    int outputLength = opus.encoder.opus_encode_float(_opusEncoder, inputNative,
         sampleCountPerChannel, outputNative, maxOutputSizeBytes);
     try {
       if (outputLength >= opus_defines.OPUS_OK) {
@@ -115,7 +112,7 @@ class SimpleOpusEncoder extends OpusEncoder {
   void destroy() {
     if (!_destroyed) {
       _destroyed = true;
-      opus_encoder.opus_encoder_destroy(_opusEncoder);
+      opus.encoder.opus_encoder_destroy(_opusEncoder);
     }
   }
 }
@@ -220,11 +217,11 @@ class BufferedOpusEncoder extends OpusEncoder {
   ///
   /// For the other parameters, see the matching fields for more information.
   factory BufferedOpusEncoder(
-      {@required int sampleRate,
-      @required int channels,
-      @required Application application,
-      int maxInputBufferSizeBytes,
-      int maxOutputBufferSizeBytes}) {
+      {required int sampleRate,
+      required int channels,
+      required Application application,
+      int? maxInputBufferSizeBytes,
+      int? maxOutputBufferSizeBytes}) {
     if (maxInputBufferSizeBytes == null) {
       maxInputBufferSizeBytes = 4 * maxSamplesPerPacket(sampleRate, channels);
     }
@@ -234,9 +231,9 @@ class BufferedOpusEncoder extends OpusEncoder {
     Pointer<Int32> error = allocate<Int32>(count: 1);
     Pointer<Uint8> input = allocate<Uint8>(count: maxInputBufferSizeBytes);
     Pointer<Uint8> output = allocate<Uint8>(count: maxOutputBufferSizeBytes);
-    Pointer<opus_encoder.OpusEncoder> encoder =
-        opus_encoder.opus_encoder_create(
-            sampleRate, channels, _applicationCodes[application], error);
+    Pointer<opus_encoder.OpusEncoder> encoder = opus.encoder
+        .opus_encoder_create(
+            sampleRate, channels, _applicationCodes[application]!, error);
     try {
       if (error.value == opus_defines.OPUS_OK) {
         return BufferedOpusEncoder._(encoder, sampleRate, channels, application,
@@ -262,10 +259,9 @@ class BufferedOpusEncoder extends OpusEncoder {
   /// `sampleCount = 2 * 48000Hz * 0.02s = 1920`.
   ///
   /// The returned list is actually just the [outputBuffer].
-  @override
   Uint8List encode() {
     int sampleCountPerChannel = inputBufferIndex ~/ (channels * 2);
-    _outputBufferIndex = opus_encoder.opus_encode(
+    _outputBufferIndex = opus.encoder.opus_encode(
         _opusEncoder,
         _inputBuffer.cast<Int16>(),
         sampleCountPerChannel,
@@ -284,10 +280,9 @@ class BufferedOpusEncoder extends OpusEncoder {
   ///
   /// Except that the sample count is calculated by dividing the [inputBufferIndex] by 4 and not by 2,
   /// this method behaves just as [encode], so see there for more information.
-  @override
   Uint8List encodeFloat() {
     int sampleCountPerChannel = inputBufferIndex ~/ (channels * 4);
-    _outputBufferIndex = opus_encoder.opus_encode_float(
+    _outputBufferIndex = opus.encoder.opus_encode_float(
         _opusEncoder,
         _inputBuffer.cast<Float>(),
         sampleCountPerChannel,
@@ -304,7 +299,7 @@ class BufferedOpusEncoder extends OpusEncoder {
   void destroy() {
     if (!_destroyed) {
       _destroyed = true;
-      opus_encoder.opus_encoder_destroy(_opusEncoder);
+      opus.encoder.opus_encoder_destroy(_opusEncoder);
       free(_inputBuffer);
       free(_outputBuffer);
     }
@@ -327,9 +322,6 @@ abstract class OpusEncoder {
   /// Wheter this encoder was already destroyed by calling [destroy].
   /// If so, calling any method will result in an [OpusDestroyedError].
   bool get destroyed;
-
-  Uint8List encode();
-  Uint8List encodeFloat();
 
   /// Destroys this encoder by releasing all native resources.
   /// After this, it is no longer possible to encode using this encoder, so any further method call will throw an [OpusDestroyedError].

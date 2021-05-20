@@ -22,16 +22,6 @@ int maxSamplesPerPacket(int sampleRate, int channels) => ((sampleRate *
         1000)
     .ceil(); //Some sample rates may not be dividable by 1000, so use ceiling instead of integer division.
 
-/// Must be called to initalize this library.
-///
-/// The [DynamicLibrary] `opus` must point to a platform native libopus library with the appropriate version.
-/// See the README for more information about loading and versioning.
-void initOpus(DynamicLibrary opus) {
-  opus_libinfo.init(opus);
-  opus_encoder.init(opus);
-  opus_decoder.init(opus);
-}
-
 final Map<Type, int> _sizes = {
   Double: sizeOf<Double>(),
   Float: sizeOf<Float>(),
@@ -47,8 +37,13 @@ final Map<Type, int> _sizes = {
   Uint64: sizeOf<Uint64>()
 };
 
-Pointer<T> allocate<T extends NativeType>({int count}) {
-  int byteCount = count * _sizes[T];
+Pointer<T> allocate<T extends NativeType>({required int count}) {
+  int? elementSize = _sizes[T];
+  if (elementSize == null) {
+    throw new UnsupportedError(
+        'The size of type $T could not be calculated! Alloacting this type is not allowed!');
+  }
+  int byteCount = count * elementSize;
   return ffipackage.malloc.allocate<T>(byteCount);
 }
 
@@ -58,7 +53,7 @@ void free(Pointer<NativeType> pointer) {
 
 /// Returns the version of the native libopus library.
 String getOpusVersion() {
-  return _asString(opus_libinfo.opus_get_version_string());
+  return _asString(opus.libinfo.opus_get_version_string());
 }
 
 String _asString(Pointer<Uint8> pointer) {
@@ -75,7 +70,7 @@ class OpusException implements Exception {
   const OpusException(this.errorCode);
   @override
   String toString() {
-    String error = _asString(opus_libinfo.opus_strerror(errorCode));
+    String error = _asString(opus.libinfo.opus_strerror(errorCode));
     return 'OpusException $errorCode: $error';
   }
 }
@@ -88,4 +83,25 @@ class OpusDestroyedError extends StateError {
   OpusDestroyedError.decoder()
       : super(
             'OpusDestroyedException: This OpusDecoder was already destroyed!');
+}
+
+late final ApiObject opus;
+
+class ApiObject {
+  final opus_libinfo.FunctionsAndGlobals libinfo;
+  final opus_encoder.FunctionsAndGlobals encoder;
+  final opus_decoder.FunctionsAndGlobals decoder;
+
+  ApiObject(DynamicLibrary opus)
+      : libinfo = new opus_libinfo.FunctionsAndGlobals(opus),
+        encoder = new opus_encoder.FunctionsAndGlobals(opus),
+        decoder = new opus_decoder.FunctionsAndGlobals(opus);
+}
+
+/// Must be called to initalize this library.
+///
+/// The [DynamicLibrary] `opusLib` must point to a platform native libopus library with the appropriate version.
+/// See the README for more information about loading and versioning.
+void initOpus(DynamicLibrary opusLib) {
+  opus = new ApiObject(opusLib);
 }

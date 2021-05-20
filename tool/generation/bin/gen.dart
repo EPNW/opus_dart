@@ -18,6 +18,12 @@ String preamble(String name, String file) {
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.''';
 }
 
+const String opusCustomWarning =
+    '''/// WARNING! Trying to use opus_custom will FAIL if opus_custom support
+/// was not enabled during library building!
+///
+''';
+
 List<List> configs = [
   ['opus_encoder', preamble('opus_encoder', 'opus.h'), opus_encoder],
   ['opus_decoder', preamble('opus_decoder', 'opus.h'), opus_decoder],
@@ -37,7 +43,11 @@ List<List> configs = [
     preamble('opus_projection', 'opus_projection.h'),
     opus_projection
   ],
-  ['opus_custom', preamble('opus_custom', 'opus_custom.h'), opus_custom]
+  [
+    'opus_custom',
+    opusCustomWarning + preamble('opus_custom', 'opus_custom.h'),
+    opus_custom
+  ]
 ];
 
 void main() async {
@@ -48,7 +58,7 @@ void main() async {
         f,
         Library.withoutLoading(
             libraryName: config[0],
-            dynamicLibraryIdentifier: '_${config[0]}',
+            containerClassName: 'FunctionsAndGlobals',
             preamble: config[1],
             elements: config[2]));
   }

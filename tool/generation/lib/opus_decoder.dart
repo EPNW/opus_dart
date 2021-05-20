@@ -4,13 +4,13 @@ import 'types.dart';
 
 ///opus_decoder_ctl is missing since variadic are not yet supported by dart ffi
 const List<Element> opus_decoder = <Element>[
-  Struct(
-      documentation: '''Opus decoder state.
+  Opaque(
+    documentation: '''Opus decoder state.
 This contains the complete state of an Opus decoder.
 It is position independent and can be freely copied.
 @see opus_decoder_create,opus_decoder_init''',
-      name: 'OpusDecoder',
-      fields: []),
+    name: 'OpusDecoder',
+  ),
   Func(
       documentation: '''Gets the size of an <code>OpusDecoder</code> structure.
 @param [in] channels <tt>int</tt>: Number of channels.
