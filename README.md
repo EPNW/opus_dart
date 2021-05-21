@@ -19,7 +19,7 @@ Current libopus version: 1.3.1
 
 See the changelog for other versions of libopus.
 
-On small patches, the patch version of this package will increase, if a new Opus version is wrapped (but there are no API changes), the minor version will increase, and on breaking API changes, the major version will increase. So to ensure to get a specific version of Opus, lock in on major and minor version (e.g. `opus_dart: ">=1.0.0 <1.1.0"`), to always use the newest Opus version with compatible API, lock on the major version (e.g. `opus_dart: ">=1.0.0 <2.0.0"`). 
+On small patches, the patch version of this package will increase, if a new Opus version is wrapped (but there are no API changes), the minor version will increase, and on breaking API changes, the major version will increase. So to ensure to get a specific version of Opus, lock in on major and minor version (e.g. `opus_dart: ">=2.0.0 <2.1.0"`), to always use the newest Opus version with compatible API, lock on the major version (e.g. `opus_dart: ">=2.0.0 <3.0.0"`). 
 
 <a name="choosing"></a>
 ## Choosing The Right Library
@@ -30,7 +30,7 @@ Variadic (especially the CTL) functions are [not supported](https://github.com/d
 so they are missing, as well as makros.
 The generated bindings can all be found in the /wrappers section and are named after the group they are from.
 Documentation of the bounded functions was copied from the Opus headers (and is thus not very well formated).
-For sake of completeness the tool folder contains the code that was used for generation. NOTE that ffi_tool ^0.4.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub. Also, since in the meantime a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - was created, this should be used to generate bindings for further opus versions.
+For sake of completeness the tool folder contains the code that was used for generation. NOTE that [ffi_tool](https://github.com/dart-interop/ffi_tool) ^0.4.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub. Also, since in the meantime a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - emerged, this should be used to generate bindings for further opus versions.
 
 <a name="choosing_firendly"></a>
 ### The Dart Friendly API
@@ -126,7 +126,7 @@ import 'package:opus_dart/opus_dart.dart';
 import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;
 
 void main(){
-    initOpus(opus_flutter.load());
+    initOpus(await opus_flutter.load());
     print(getOpusVersion());
 }
 ```
