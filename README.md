@@ -80,7 +80,7 @@ Finally, you can use the objects `libinfo` and `custom` to access the functions 
 ### The Dart Friendly API
 If using the dart firendly library opus_dart, you also have to initialize it using the toplevel `initOpus` function,
 but unlike the bindings, there is no need to import it with a prefix. This would look like:
-```
+```dart
 import 'package:opus_dart/opus_dart.dart';
 
 void main(){
@@ -121,7 +121,7 @@ Whether you use prebuild binaries or compile libopus from [source](https://githu
 <a name="init_flutter"></a>
 ### Flutter
 If you are using Flutter, you can use [opus_flutter](https://pub.dev/packages/opus_flutter) to easily obtain a `DynamicLibrary` of libopus:
-```
+```dart
 import 'package:opus_dart/opus_dart.dart';
 import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;
 
