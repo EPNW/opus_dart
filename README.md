@@ -1,4 +1,3 @@
-
 # opus_dart
 Wraps libopus in dart, and additionally provides a dart friendly API for encoding and decoding.
 
@@ -62,12 +61,12 @@ so that the allocated native memory can be released. Otherwise, a memory leak ma
 Each generated library in /wrappers (except opus_defines.h) need to be initialized if used.
 The generated libraries are intended to be used with a prefix, because they sometimes have
 functions with the same signature. For example, you would import them using
-```
+```dart
 import 'package:opus_dart/wrappers/opus_libinfo.dart' as opus_libinfo;
 import 'package:opus_dart/wrappers/opus_custom.dart' as opus_custom;
 ```
 and then you can call in your startup logic
-```
+```dart
 late final opus_libinfo.FunctionsAndGlobals libinfo;
 late final opus_custom.FunctionsAndGlobals custom;
 void main(){
@@ -94,9 +93,9 @@ void main(){
 <a name="init_lib"></a>
 ### What is `lib`?
 As you may have noticed above, both, the Dart friendly API and the bindings need `lib` to initalize.
-`lib` is a [DynamicLibrary](https://api.dart.dev/stable/2.7.0/dart-ffi/DynamicLibrary-class.html) instance, pointing to libopus.
+`lib` is a [DynamicLibrary](https://api.dart.dev/stable/2.12.0/dart-ffi/DynamicLibrary-class.html) instance, pointing to libopus.
 On a dart:vm platform, you can dynamically load it:
-```
+```dart
 import 'dart:ffi';
 
 void main() {
@@ -121,4 +120,13 @@ Whether you use prebuild binaries or compile libopus from [source](https://githu
 
 <a name="init_flutter"></a>
 ### Flutter
-Since Flutter for iOS and Android has a [native build system](https://github.com/dart-lang/sdk/issues/36712), there is [opus_flutter](https://pub.dev/packages/opus_flutter) which includes Opus sources and build configurations.
+If you are using Flutter, you can use [opus_flutter](https://pub.dev/packages/opus_flutter) to easily obtain a `DynamicLibrary` of libopus:
+```
+import 'package:opus_dart/opus_dart.dart';
+import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;
+
+void main(){
+    initOpus(opus_flutter.load());
+    print(getOpusVersion());
+}
+```
