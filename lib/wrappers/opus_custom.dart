@@ -2,13 +2,13 @@
 /// was not enabled during library building!
 ///
 /// Contains methods and structs from the opus_custom group of opus_custom.h.
-/// SHOULD be imported as opus_custom and MUST be initalized using its [init] function.
+/// SHOULD be imported as opus_custom.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
 
 library opus_custom;
 
-import 'dart:ffi' as ffi;
+import '../src/proxy_ffi.dart' as ffi;
 
 /// Contains the state of an encoder. One encoder state is needed
 /// for each stream. It is initialized once at the beginning of the

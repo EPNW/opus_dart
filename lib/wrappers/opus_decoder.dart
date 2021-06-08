@@ -1,11 +1,11 @@
 /// Contains methods and structs from the opus_decoder group of opus.h.
-/// SHOULD be imported as opus_decoder and MUST be initalized using its [init] function.
+/// SHOULD be imported as opus_decoder.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
 
 library opus_decoder;
 
-import 'dart:ffi' as ffi;
+import '../src/proxy_ffi.dart' as ffi;
 
 /// Opus decoder state.
 /// This contains the complete state of an Opus decoder.

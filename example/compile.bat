@@ -1,0 +1,1 @@
+dart2js ./bin/example.dart -o ./web/main.dart.js

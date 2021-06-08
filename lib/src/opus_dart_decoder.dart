@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'proxy_ffi.dart';
 import 'dart:typed_data';
 import '../wrappers/opus_decoder.dart' as opus_decoder;
 import '../wrappers/opus_defines.dart' as opus_defines;
@@ -17,16 +17,16 @@ int _packetDuration(int samples, int channels, int sampleRate) =>
 /// If you are using a [BufferedOpusDecoder], take a look at it's [pcmSoftClipOutputBuffer]
 /// method instead, since it avoids unnecessary memory copying.
 Float32List pcmSoftClip({required Float32List input, required int channels}) {
-  Pointer<Float> nativePcm = allocate<Float>(count: input.length);
+  Pointer<Float> nativePcm = opus.allocator.call<Float>(input.length);
   nativePcm.asTypedList(input.length).setAll(0, input);
-  Pointer<Float> nativeBuffer = allocate<Float>(count: channels);
+  Pointer<Float> nativeBuffer = opus.allocator.call<Float>(channels);
   try {
     opus.decoder.opus_pcm_soft_clip(
         nativePcm, input.length ~/ channels, channels, nativeBuffer);
     return Float32List.fromList(nativePcm.asTypedList(input.length));
   } finally {
-    free(nativePcm);
-    free(nativeBuffer);
+    opus.allocator.free(nativePcm);
+    opus.allocator.free(nativeBuffer);
   }
 }
 
@@ -60,8 +60,8 @@ class SimpleOpusDecoder extends OpusDecoder {
   /// Creates an new [SimpleOpusDecoder] based on the [sampleRate] and [channels].
   /// See the matching fields for more information about these parameters.
   factory SimpleOpusDecoder({required int sampleRate, required int channels}) {
-    Pointer<Int32> error = allocate<Int32>(count: 1);
-    Pointer<Float> softClipBuffer = allocate<Float>(count: channels);
+    Pointer<Int32> error = opus.allocator.call<Int32>(1);
+    Pointer<Float> softClipBuffer = opus.allocator.call<Float>(channels);
     Pointer<opus_decoder.OpusDecoder> decoder =
         opus.decoder.opus_decoder_create(sampleRate, channels, error);
     try {
@@ -69,11 +69,11 @@ class SimpleOpusDecoder extends OpusDecoder {
         return SimpleOpusDecoder._(
             decoder, sampleRate, channels, softClipBuffer);
       } else {
-        free(softClipBuffer);
+        opus.allocator.free(softClipBuffer);
         throw OpusException(error.value);
       }
     } finally {
-      free(error);
+      opus.allocator.free(error);
     }
   }
 
@@ -100,10 +100,11 @@ class SimpleOpusDecoder extends OpusDecoder {
   /// The input bytes need to represent a whole packet!
   @override
   Int16List decode({Uint8List? input, bool fec = false, int? loss}) {
-    Pointer<Int16> outputNative = allocate<Int16>(count: _maxSamplesPerPacket);
+    Pointer<Int16> outputNative =
+        opus.allocator.call<Int16>(_maxSamplesPerPacket);
     Pointer<Uint8> inputNative;
     if (input != null) {
-      inputNative = allocate<Uint8>(count: input.length);
+      inputNative = opus.allocator.call<Uint8>(input.length);
       inputNative.asTypedList(input.length).setAll(0, input);
     } else {
       inputNative = nullptr;
@@ -126,8 +127,8 @@ class SimpleOpusDecoder extends OpusDecoder {
         throw OpusException(outputSamplesPerChannel);
       }
     } finally {
-      free(inputNative);
-      free(outputNative);
+      opus.allocator.free(inputNative);
+      opus.allocator.free(outputNative);
     }
   }
 
@@ -146,10 +147,11 @@ class SimpleOpusDecoder extends OpusDecoder {
       bool fec = false,
       bool autoSoftClip = false,
       int? loss}) {
-    Pointer<Float> outputNative = allocate<Float>(count: _maxSamplesPerPacket);
+    Pointer<Float> outputNative =
+        opus.allocator.call<Float>(_maxSamplesPerPacket);
     Pointer<Uint8> inputNative;
     if (input != null) {
-      inputNative = allocate<Uint8>(count: input.length);
+      inputNative = opus.allocator.call<Uint8>(input.length);
       inputNative.asTypedList(input.length).setAll(0, input);
     } else {
       inputNative = nullptr;
@@ -176,8 +178,8 @@ class SimpleOpusDecoder extends OpusDecoder {
         throw OpusException(outputSamplesPerChannel);
       }
     } finally {
-      free(inputNative);
-      free(outputNative);
+      opus.allocator.free(inputNative);
+      opus.allocator.free(outputNative);
     }
   }
 
@@ -186,7 +188,7 @@ class SimpleOpusDecoder extends OpusDecoder {
     if (!_destroyed) {
       _destroyed = true;
       opus.decoder.opus_decoder_destroy(_opusDecoder);
-      free(_softClipBuffer);
+      opus.allocator.free(_softClipBuffer);
     }
   }
 }
@@ -319,10 +321,11 @@ class BufferedOpusDecoder extends OpusDecoder {
     if (maxOutputBufferSizeBytes == null) {
       maxOutputBufferSizeBytes = maxSamplesPerPacket(sampleRate, channels);
     }
-    Pointer<Int32> error = allocate<Int32>(count: 1);
-    Pointer<Uint8> input = allocate<Uint8>(count: maxInputBufferSizeBytes);
-    Pointer<Uint8> output = allocate<Uint8>(count: maxOutputBufferSizeBytes);
-    Pointer<Float> softClipBuffer = allocate<Float>(count: channels);
+    Pointer<Int32> error = opus.allocator.call<Int32>(1);
+    Pointer<Uint8> input = opus.allocator.call<Uint8>(maxInputBufferSizeBytes);
+    Pointer<Uint8> output =
+        opus.allocator.call<Uint8>(maxOutputBufferSizeBytes);
+    Pointer<Float> softClipBuffer = opus.allocator.call<Float>(channels);
     Pointer<opus_decoder.OpusDecoder> encoder =
         opus.decoder.opus_decoder_create(sampleRate, channels, error);
     try {
@@ -337,13 +340,13 @@ class BufferedOpusDecoder extends OpusDecoder {
             maxOutputBufferSizeBytes,
             softClipBuffer);
       } else {
-        free(input);
-        free(output);
-        free(softClipBuffer);
+        opus.allocator.free(input);
+        opus.allocator.free(output);
+        opus.allocator.free(softClipBuffer);
         throw OpusException(error.value);
       }
     } finally {
-      free(error);
+      opus.allocator.free(error);
     }
   }
 
@@ -445,9 +448,9 @@ class BufferedOpusDecoder extends OpusDecoder {
     if (!_destroyed) {
       _destroyed = true;
       opus.decoder.opus_decoder_destroy(_opusDecoder);
-      free(_inputBuffer);
-      free(_outputBuffer);
-      free(_softClipBuffer);
+      opus.allocator.free(_inputBuffer);
+      opus.allocator.free(_outputBuffer);
+      opus.allocator.free(_softClipBuffer);
     }
   }
 

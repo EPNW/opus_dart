@@ -1,5 +1,5 @@
-import 'dart:ffi';
-import 'dart:io' show Platform;
+import 'package:example/example.dart';
+
 import 'package:opus_dart/wrappers/opus_custom.dart' as opus_custom;
 import 'package:opus_dart/wrappers/opus_encoder.dart' as opus_encoder;
 import 'package:opus_dart/wrappers/opus_decoder.dart' as opus_decoder;
@@ -17,21 +17,9 @@ late final opus_libinfo.FunctionsAndGlobals libinfo;
 late final opus_multistream.FunctionsAndGlobals multistream;
 late final opus_projection.FunctionsAndGlobals projection;
 late final opus_repacketizer.FunctionsAndGlobals repacketizer;
-void main() {
-  DynamicLibrary lib;
-  if (Platform.isWindows) {
-    bool x64 = Platform.version.contains('x64');
-    if (x64) {
-      lib =
-          new DynamicLibrary.open('C:/Users/Eric/Desktop/opus/libopus_x64.dll');
-    } else {
-      lib = new DynamicLibrary.open('path/to/libopus_x86.dll');
-    }
-  } else if (Platform.isLinux) {
-    lib = new DynamicLibrary.open('/usr/local/lib/libopus.so');
-  } else {
-    throw new UnsupportedError('This programm does not support this platform!');
-  }
+Future<void> main() async {
+  await initFfi();
+  DynamicLibrary lib = openOpus();
   encoder = new opus_encoder.FunctionsAndGlobals(lib);
   print('encoder lookup successful');
   decoder = new opus_decoder.FunctionsAndGlobals(lib);

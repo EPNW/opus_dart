@@ -1,46 +1,40 @@
 import 'dart:async';
 import 'dart:typed_data';
-
-import 'package:opus_dart/opus_dart.dart';
-import 'dart:ffi';
-import 'dart:io';
 import 'dart:convert';
+import 'dart:math';
+import 'package:example/example.dart';
+import 'package:opus_dart/opus_dart.dart';
 
 /// Should be run from the example
 Future<void> main() async {
-  init();
-  await example();
+  await initFfi();
+  initOpus(openOpus());
+  Uint8List data = await example();
+  await saveOrDownload(data);
 }
 
-void init() {
-  DynamicLibrary lib;
-  if (Platform.isWindows) {
-    bool x64 = Platform.version.contains('x64');
-    if (x64) {
-      lib =
-          new DynamicLibrary.open('C:/Users/Eric/Desktop/opus/libopus_x64.dll');
-    } else {
-      lib = new DynamicLibrary.open('path/to/libopus_x86.dll');
-    }
-  } else if (Platform.isLinux) {
-    lib = new DynamicLibrary.open('/usr/local/lib/libopus.so');
-  } else {
-    throw new UnsupportedError('This programm does not support this platform!');
+Stream<List<int>> simulateInput() async* {
+  const int portionSize =
+      65535; //equals the usual size you get per list in a network stream
+  ByteData data = s16le_16000hz_mono.buffer.asByteData();
+  int i = 0;
+  while (i != data.lengthInBytes) {
+    int r = min(portionSize, data.lengthInBytes - i);
+    yield data.buffer.asUint8List(data.offsetInBytes + i, r);
+    i += r;
+    await new Future.delayed(
+        const Duration(milliseconds: 10)); //Simulate network latency
   }
-  initOpus(lib);
-  print(getOpusVersion());
 }
 
 /// Get a stream, encode it and decode it, then save it to the harddrive
 /// with a wav header.
-Future<File> example() async {
+Future<Uint8List> example() async {
   const int sampleRate = 16000;
   const int channels = 1;
-  Stream<List<int>> input = await new File('s16le_16000hz_mono.raw').openRead();
-  File file = new File('output.wav');
-  IOSink output = file.openWrite();
+  List<Uint8List> output = [];
   output.add(new Uint8List(wavHeaderSize));
-  await input
+  await simulateInput()
       .transform(new StreamOpusEncoder.bytes(
           floatInput: false,
           frameTime: FrameTime.ms20,
@@ -56,19 +50,21 @@ Future<File> example() async {
           channels: channels,
           copyOutput: true,
           forwardErrorCorrection: false))
-      .cast<List<int>>()
-      .pipe(output);
-  await output.close();
+      .cast<Uint8List>()
+      .forEach(output.add);
+  int length = output.fold(0, (int l, Uint8List element) => l + element.length);
   //Write the wav header
-  RandomAccessFile r = await file.open(mode: FileMode.append);
-  await r.setPosition(0);
-  Uint8List header = wavHeader(
-      channels: channels,
-      sampleRate: sampleRate,
-      fileSize: await file.length());
-  await r.writeFrom(header);
-  await r.close();
-  return file;
+  Uint8List header =
+      wavHeader(channels: channels, sampleRate: sampleRate, fileSize: length);
+  output[0] = header;
+  // Merge into a single Uint8List
+  Uint8List flat = new Uint8List(length);
+  int index = 0;
+  for (Uint8List element in output) {
+    flat.setAll(index, element);
+    index += element.length;
+  }
+  return flat;
 }
 
 const int wavHeaderSize = 44;

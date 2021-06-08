@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'proxy_ffi.dart';
 import 'dart:typed_data';
 import '../wrappers/opus_encoder.dart' as opus_encoder;
 import '../wrappers/opus_defines.dart' as opus_defines;
@@ -31,7 +31,7 @@ class SimpleOpusEncoder extends OpusEncoder {
       {required int sampleRate,
       required int channels,
       required Application application}) {
-    Pointer<Int32> error = allocate<Int32>(count: 1);
+    Pointer<Int32> error = opus.allocator.call<Int32>(1);
     Pointer<opus_encoder.OpusEncoder> encoder = opus.encoder
         .opus_encoder_create(
             sampleRate, channels, _applicationCodes[application]!, error);
@@ -42,7 +42,7 @@ class SimpleOpusEncoder extends OpusEncoder {
         throw OpusException(error.value);
       }
     } finally {
-      free(error);
+      opus.allocator.free(error);
     }
   }
 
@@ -63,9 +63,10 @@ class SimpleOpusEncoder extends OpusEncoder {
   /// [input] and the returned list are copied to and respectively from native memory.
   Uint8List encode(
       {required Int16List input, int maxOutputSizeBytes = maxDataBytes}) {
-    Pointer<Int16> inputNative = allocate<Int16>(count: input.length);
+    Pointer<Int16> inputNative = opus.allocator.call<Int16>(input.length);
     inputNative.asTypedList(input.length).setAll(0, input);
-    Pointer<Uint8> outputNative = allocate<Uint8>(count: maxOutputSizeBytes);
+    Pointer<Uint8> outputNative =
+        opus.allocator.call<Uint8>(maxOutputSizeBytes);
     int sampleCountPerChannel = input.length ~/ channels;
     int outputLength = opus.encoder.opus_encode(_opusEncoder, inputNative,
         sampleCountPerChannel, outputNative, maxOutputSizeBytes);
@@ -78,8 +79,8 @@ class SimpleOpusEncoder extends OpusEncoder {
         throw OpusException(outputLength);
       }
     } finally {
-      free(inputNative);
-      free(outputNative);
+      opus.allocator.free(inputNative);
+      opus.allocator.free(outputNative);
     }
   }
 
@@ -88,9 +89,10 @@ class SimpleOpusEncoder extends OpusEncoder {
   /// This method behaves just as [encode], so see there for more information.
   Uint8List encodeFloat(
       {required Float32List input, int maxOutputSizeBytes = maxDataBytes}) {
-    Pointer<Float> inputNative = allocate<Float>(count: input.length);
+    Pointer<Float> inputNative = opus.allocator.call<Float>(input.length);
     inputNative.asTypedList(input.length).setAll(0, input);
-    Pointer<Uint8> outputNative = allocate<Uint8>(count: maxOutputSizeBytes);
+    Pointer<Uint8> outputNative =
+        opus.allocator.call<Uint8>(maxOutputSizeBytes);
     int sampleCountPerChannel = input.length ~/ channels;
     int outputLength = opus.encoder.opus_encode_float(_opusEncoder, inputNative,
         sampleCountPerChannel, outputNative, maxOutputSizeBytes);
@@ -103,8 +105,8 @@ class SimpleOpusEncoder extends OpusEncoder {
         throw OpusException(outputLength);
       }
     } finally {
-      free(inputNative);
-      free(outputNative);
+      opus.allocator.free(inputNative);
+      opus.allocator.free(outputNative);
     }
   }
 
@@ -228,9 +230,10 @@ class BufferedOpusEncoder extends OpusEncoder {
     if (maxOutputBufferSizeBytes == null) {
       maxOutputBufferSizeBytes = maxDataBytes;
     }
-    Pointer<Int32> error = allocate<Int32>(count: 1);
-    Pointer<Uint8> input = allocate<Uint8>(count: maxInputBufferSizeBytes);
-    Pointer<Uint8> output = allocate<Uint8>(count: maxOutputBufferSizeBytes);
+    Pointer<Int32> error = opus.allocator.call<Int32>(1);
+    Pointer<Uint8> input = opus.allocator.call<Uint8>(maxInputBufferSizeBytes);
+    Pointer<Uint8> output =
+        opus.allocator.call<Uint8>(maxOutputBufferSizeBytes);
     Pointer<opus_encoder.OpusEncoder> encoder = opus.encoder
         .opus_encoder_create(
             sampleRate, channels, _applicationCodes[application]!, error);
@@ -239,12 +242,12 @@ class BufferedOpusEncoder extends OpusEncoder {
         return BufferedOpusEncoder._(encoder, sampleRate, channels, application,
             input, maxInputBufferSizeBytes, output, maxOutputBufferSizeBytes);
       } else {
-        free(input);
-        free(output);
+        opus.allocator.free(input);
+        opus.allocator.free(output);
         throw OpusException(error.value);
       }
     } finally {
-      free(error);
+      opus.allocator.free(error);
     }
   }
 
@@ -300,8 +303,8 @@ class BufferedOpusEncoder extends OpusEncoder {
     if (!_destroyed) {
       _destroyed = true;
       opus.encoder.opus_encoder_destroy(_opusEncoder);
-      free(_inputBuffer);
-      free(_outputBuffer);
+      opus.allocator.free(_inputBuffer);
+      opus.allocator.free(_outputBuffer);
     }
   }
 }

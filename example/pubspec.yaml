@@ -1,0 +1,10 @@
+name: example
+version: 1.0.0+1
+publish_to: 'none'
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+dependencies:
+  opus_dart:
+    path: ..
+  web_ffi: ^0.7.1
+  js: ^0.6.3

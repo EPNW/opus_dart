@@ -20,5 +20,8 @@ doc/api/
 *.js.deps
 *.js.map
 
+output
 tool/generation/output
 example/output.wav
+example/web/libopus.wasm
+example/web/libopus.js

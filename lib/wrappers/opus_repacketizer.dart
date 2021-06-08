@@ -1,11 +1,11 @@
 /// Contains methods and structs from the opus_repacketizer group of opus.h.
-/// SHOULD be imported as opus_repacketizer and MUST be initalized using its [init] function.
+/// SHOULD be imported as opus_repacketizer.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
 
 library opus_repacketizer;
 
-import 'dart:ffi' as ffi;
+import '../src/proxy_ffi.dart' as ffi;
 
 /// Opus repacketizer state.
 class OpusRepacketizer extends ffi.Opaque {}

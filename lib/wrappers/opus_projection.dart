@@ -1,11 +1,11 @@
 /// Contains methods and structs from the opus_projection group of opus_projection.h.
-/// SHOULD be imported as opus_projection and MUST be initalized using its [init] function.
+/// SHOULD be imported as opus_projection.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
 
 library opus_projection;
 
-import 'dart:ffi' as ffi;
+import '../src/proxy_ffi.dart' as ffi;
 
 /// Opus projection encoder state.
 /// * This contains the complete state of a projection Opus encoder.

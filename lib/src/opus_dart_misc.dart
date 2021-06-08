@@ -1,7 +1,5 @@
-import 'dart:ffi';
 import 'dart:convert';
-
-import 'package:ffi/ffi.dart' as ffipackage;
+import 'proxy_ffi.dart';
 
 import '../wrappers/opus_libinfo.dart' as opus_libinfo;
 import '../wrappers/opus_encoder.dart' as opus_encoder;
@@ -21,35 +19,6 @@ int maxSamplesPerPacket(int sampleRate, int channels) => ((sampleRate *
             120) /
         1000)
     .ceil(); //Some sample rates may not be dividable by 1000, so use ceiling instead of integer division.
-
-final Map<Type, int> _sizes = {
-  Double: sizeOf<Double>(),
-  Float: sizeOf<Float>(),
-  Int8: sizeOf<Int8>(),
-  Int16: sizeOf<Int16>(),
-  Int32: sizeOf<Int32>(),
-  Int64: sizeOf<Int64>(),
-  IntPtr: sizeOf<IntPtr>(),
-  Pointer: sizeOf<Pointer>(),
-  Uint8: sizeOf<Uint8>(),
-  Uint16: sizeOf<Uint16>(),
-  Uint32: sizeOf<Uint32>(),
-  Uint64: sizeOf<Uint64>()
-};
-
-Pointer<T> allocate<T extends NativeType>({required int count}) {
-  int? elementSize = _sizes[T];
-  if (elementSize == null) {
-    throw new UnsupportedError(
-        'The size of type $T could not be calculated! Alloacting this type is not allowed!');
-  }
-  int byteCount = count * elementSize;
-  return ffipackage.malloc.allocate<T>(byteCount);
-}
-
-void free(Pointer<NativeType> pointer) {
-  ffipackage.malloc.free(pointer);
-}
 
 /// Returns the version of the native libopus library.
 String getOpusVersion() {
@@ -91,8 +60,9 @@ class ApiObject {
   final opus_libinfo.FunctionsAndGlobals libinfo;
   final opus_encoder.FunctionsAndGlobals encoder;
   final opus_decoder.FunctionsAndGlobals decoder;
+  final Allocator allocator;
 
-  ApiObject(DynamicLibrary opus)
+  ApiObject(DynamicLibrary opus, this.allocator)
       : libinfo = new opus_libinfo.FunctionsAndGlobals(opus),
         encoder = new opus_encoder.FunctionsAndGlobals(opus),
         decoder = new opus_decoder.FunctionsAndGlobals(opus);
@@ -100,8 +70,15 @@ class ApiObject {
 
 /// Must be called to initalize this library.
 ///
-/// The [DynamicLibrary] `opusLib` must point to a platform native libopus library with the appropriate version.
+/// On platforms where dart:ffi is available, the [dart:ffi DynamicLibrary](https://api.dart.dev/stable/2.12.0/dart-ffi/DynamicLibrary-class.html) `opusLib`
+/// must point to a platform native libopus library with the appropriate version.
+///
+/// On platforms where there is no dart:ffi, most notabley on the web, `opusLib`
+/// should be a [web_ffi DynamicLibrary](https://pub.dev/documentation/web_ffi/latest/web_ffi/DynamicLibrary-class.html). The [web_ffi Memory](https://pub.dev/documentation/web_ffi/latest/web_ffi_modules/Memory/init.html) object should
+/// have been initalized before calling this function. This function registers all
+/// Opaque types for you.
+///
 /// See the README for more information about loading and versioning.
 void initOpus(DynamicLibrary opusLib) {
-  opus = new ApiObject(opusLib);
+  opus = createApiObject(opusLib);
 }

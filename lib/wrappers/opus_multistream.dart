@@ -1,11 +1,11 @@
 /// Contains methods and structs from the opus_multistream group of opus_multistream.h.
-/// SHOULD be imported as opus_multistream and MUST be initalized using its [init] function.
+/// SHOULD be imported as opus_multistream.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
 
 library opus_multistream;
 
-import 'dart:ffi' as ffi;
+import '../src/proxy_ffi.dart' as ffi;
 
 /// Opus multistream encoder state.
 /// This contains the complete state of a multistream Opus encoder.

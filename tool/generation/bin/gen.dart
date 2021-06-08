@@ -13,7 +13,7 @@ import 'package:opus_dart_generation/opus_custom.dart';
 
 String preamble(String name, String file) {
   return '''/// Contains methods and structs from the $name group of $file.
-/// SHOULD be imported as $name and MUST be initalized using its [init] function.
+/// SHOULD be imported as $name.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.''';
 }

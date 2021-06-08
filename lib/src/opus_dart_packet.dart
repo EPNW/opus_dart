@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'proxy_ffi.dart';
 import 'dart:typed_data';
 import '../wrappers/opus_defines.dart' as opus_defines;
 import 'opus_dart_misc.dart';
@@ -10,7 +10,7 @@ abstract class OpusPacketUtils {
   /// Returns the amount of samples in a [packet] given a [sampleRate].
   static int getSampleCount(
       {required Uint8List packet, required int sampleRate}) {
-    Pointer<Uint8> data = allocate<Uint8>(count: packet.length);
+    Pointer<Uint8> data = opus.allocator.call<Uint8>(packet.length);
     data.asTypedList(packet.length).setAll(0, packet);
     try {
       int sampleCount = opus.decoder
@@ -21,13 +21,13 @@ abstract class OpusPacketUtils {
         throw OpusException(sampleCount);
       }
     } finally {
-      free(data);
+      opus.allocator.free(data);
     }
   }
 
   /// Returns the amount of frames in a [packet].
   static int getFrameCount({required Uint8List packet}) {
-    Pointer<Uint8> data = allocate<Uint8>(count: packet.length);
+    Pointer<Uint8> data = opus.allocator.call<Uint8>(packet.length);
     data.asTypedList(packet.length).setAll(0, packet);
     try {
       int frameCount =
@@ -38,14 +38,14 @@ abstract class OpusPacketUtils {
         throw OpusException(frameCount);
       }
     } finally {
-      free(data);
+      opus.allocator.free(data);
     }
   }
 
   /// Returns the amount of samples per frame in a [packet] given a [sampleRate].
   static int getSamplesPerFrame(
       {required Uint8List packet, required int sampleRate}) {
-    Pointer<Uint8> data = allocate<Uint8>(count: packet.length);
+    Pointer<Uint8> data = opus.allocator.call<Uint8>(packet.length);
     data.asTypedList(packet.length).setAll(0, packet);
     try {
       int samplesPerFrame =
@@ -56,13 +56,13 @@ abstract class OpusPacketUtils {
         throw OpusException(samplesPerFrame);
       }
     } finally {
-      free(data);
+      opus.allocator.free(data);
     }
   }
 
   /// Returns the channel count from a [packet]
   static int getChannelCount({required Uint8List packet}) {
-    Pointer<Uint8> data = allocate<Uint8>(count: packet.length);
+    Pointer<Uint8> data = opus.allocator.call<Uint8>(packet.length);
     data.asTypedList(packet.length).setAll(0, packet);
     try {
       int channelCount = opus.decoder.opus_packet_get_nb_channels(data);
@@ -72,13 +72,13 @@ abstract class OpusPacketUtils {
         throw OpusException(channelCount);
       }
     } finally {
-      free(data);
+      opus.allocator.free(data);
     }
   }
 
   /// Returns the bandwidth from a [packet]
   static int getBandwidth({required Uint8List packet}) {
-    Pointer<Uint8> data = allocate<Uint8>(count: packet.length);
+    Pointer<Uint8> data = opus.allocator.call<Uint8>(packet.length);
     data.asTypedList(packet.length).setAll(0, packet);
     try {
       int bandwidth = opus.decoder.opus_packet_get_bandwidth(data);
@@ -88,7 +88,7 @@ abstract class OpusPacketUtils {
         throw OpusException(bandwidth);
       }
     } finally {
-      free(data);
+      opus.allocator.free(data);
     }
   }
 }

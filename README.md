@@ -19,7 +19,7 @@ Current libopus version: 1.3.1
 
 See the changelog for other versions of libopus.
 
-On small patches, the patch version of this package will increase, if a new Opus version is wrapped (but there are no API changes), the minor version will increase, and on breaking API changes, the major version will increase. So to ensure to get a specific version of Opus, lock in on major and minor version (e.g. `opus_dart: ">=2.0.0 <2.1.0"`), to always use the newest Opus version with compatible API, lock on the major version (e.g. `opus_dart: ">=2.0.0 <3.0.0"`). 
+On small patches, the patch version of this package will increase, if a new Opus version is wrapped (but there are no API changes), the minor version will increase, and on breaking API changes, the major version will increase. So to ensure to get a specific version of Opus, lock in on major and minor version (e.g. `opus_dart: ">=3.0.0 <3.1.0"`), to always use the newest Opus version with compatible API, lock on the major version (e.g. `opus_dart: ">=4.0.0 <4.0.0"`). 
 
 <a name="choosing"></a>
 ## Choosing The Right Library
@@ -93,10 +93,13 @@ void main(){
 <a name="init_lib"></a>
 ### What is `lib`?
 As you may have noticed above, both, the Dart friendly API and the bindings need `lib` to initalize.
-`lib` is a [DynamicLibrary](https://api.dart.dev/stable/2.12.0/dart-ffi/DynamicLibrary-class.html) instance, pointing to libopus.
-On a dart:vm platform, you can dynamically load it:
+Since web support was introduced in vesion `3.0.0` of this package, `lib` is something different on platforms
+that support `dart:ffi`, and on the web, where `dart:ffi` is not available, and where [web_ffi](https://pub.dev/packages/web_ffi) is used to emulate `dart:ffi`.
+
+On a `dart:ffi` platform, `lib` is a [dart:ffi DynamicLibrary](https://api.dart.dev/stable/2.12.0/dart-ffi/DynamicLibrary-class.html) instance, pointing to libopus. You can dynamically load it:
 ```dart
 import 'dart:ffi';
+import 'dart:io' show Platform;
 
 void main() {
   DynamicLibrary lib;
@@ -112,15 +115,24 @@ void main() {
   }
 }
 ```
-This package does not contain any binaries, and even if libopus is open source, no source files are included in this package either,
-since there is [no native build system for the dart:vm](https://github.com/dart-lang/sdk/issues/36712) at the moment.
-It's up to you to get them and to distribute them with your application.
+
+On the web, `lib` is a [web_ffi DynamicLibrary](https://pub.dev/documentation/web_ffi/latest/web_ffi/DynamicLibrary-class.html) instance.
+You can also dynamically load it, but you have to inject some JavaScript into your page first. A detailed walkthrough can be found in [web_ffi's example](https://github.com/EPNW/web_ffi/blob/master/example/README.md).
+Note: If you use the dart fiendly API with `web_ffi`, all `Opaque` types are registered automatically. If you use the bindings with `web_ffi`, you have to register them manually!
+
+Also, it might be interesting to study the [example](https://github.com/EPNW/opus_dart/tree/master/example), what makes use of conditional imports and initalization.
+
+**Attention:** This package does not contain any binaries, and even if libopus is open source, no source files are included in this package either,
+since there is [no native build system for dart:ffi](https://github.com/dart-lang/sdk/issues/36712) at the moment.
+There is also no build system for WebAssembly integrated in dart at the moment.
+It's up to you to get binaries and to distribute them with your application.
 Keep in mind that you need a dynamic library for all operating systems and architectures you want to support.
-Whether you use prebuild binaries or compile libopus from [source](https://github.com/xiph/opus/) yourself, the version you use should match this packages wrapped version (see above). An example to build Opus can be found in the Dockerfile on this packages GitHub page.
+Whether you use prebuild binaries or compile libopus from [source](https://github.com/xiph/opus/) yourself, the version you use should match this packages wrapped version (see above). An example to build Opus can be found in the [Dockerfile on this packages GitHub page](https://github.com/EPNW/opus_dart/blob/master/Dockerfile).
+An example to build it for the web can be found in [web_ffi's example](https://github.com/EPNW/web_ffi/blob/master/example/README.md).
 
 <a name="init_flutter"></a>
 ### Flutter
-If you are using Flutter, you can use [opus_flutter](https://pub.dev/packages/opus_flutter) to easily obtain a `DynamicLibrary` of libopus:
+If you are using Flutter, you can use [opus_flutter](https://pub.dev/packages/opus_flutter) to easily obtain a `DynamicLibrary` of libopus, for both, `dart:ffi` and web platforms:
 ```dart
 import 'package:opus_dart/opus_dart.dart';
 import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;

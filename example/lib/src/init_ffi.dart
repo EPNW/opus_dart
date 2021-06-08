@@ -1,8 +1,11 @@
+// Notice that in this file, we import dart:ffi and not proxy_ffi.dart
 import 'dart:ffi';
 import 'dart:io' show Platform;
-import 'package:opus_dart/opus_dart.dart';
 
-void main() {
+// For dart:ffi platforms, this can be a no-op (empty function)
+Future<void> initFfi() async {}
+
+DynamicLibrary openOpus() {
   DynamicLibrary lib;
   if (Platform.isWindows) {
     bool x64 = Platform.version.contains('x64');
@@ -17,6 +20,5 @@ void main() {
   } else {
     throw new UnsupportedError('This programm does not support this platform!');
   }
-  initOpus(lib);
-  print(getOpusVersion());
+  return lib;
 }
