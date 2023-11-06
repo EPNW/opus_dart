@@ -2,6 +2,7 @@
 /// SHOULD be imported as opus_libinfo.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
+// ignore_for_file: camel_case_types, non_constant_identifier_names, constant_identifier_names
 
 library opus_libinfo;
 

@@ -1,3 +1,10 @@
+## [3.0.1] - 06.11.2023
+
+* libopus 1.3.1
+* Updated dependencies
+* Fixed analysis errors
+
+
 ## [3.0.0] - 08.06.2021
 
 * libopus 1.3.1

@@ -15,7 +15,8 @@ String preamble(String name, String file) {
   return '''/// Contains methods and structs from the $name group of $file.
 /// SHOULD be imported as $name.
 ///
-/// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.''';
+/// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
+// ignore_for_file: camel_case_types, non_constant_identifier_names, constant_identifier_names''';
 }
 
 const String opusCustomWarning =

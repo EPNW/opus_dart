@@ -5,6 +5,11 @@
 /// SHOULD be imported as opus_custom.
 ///
 /// AUTOMATICALLY GENERATED FILE. DO NOT MODIFY.
+// ignore_for_file: camel_case_types, non_constant_identifier_names, constant_identifier_names
+
+// We are going to ignore subtype_of_sealed_class since dart analysis does not
+// get the imports right when differentiating between web_ffi and dart:ffi
+// ignore_for_file: subtype_of_sealed_class
 
 library opus_custom;
 
