@@ -1,6 +1,6 @@
 name: opus_dart_generation
 version: 2.0.0
-author: EPNW <prokopwieler.hardundsoftware@gmail.com>
+author: EPNW <contact@epnw.eu>
 homepage: https://github.com/EPNW/opus_dart
 description: Generates the dart wrappers for opus.
 environment:
