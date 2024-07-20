@@ -26,11 +26,7 @@ On small patches, the patch version of this package will increase, if a new Opus
 <a name="choosing_bindings"></a>
 ### The Bindings
 There are automatically generated bindings for most functions of the Opus include headers.
-Variadic (especially the CTL) functions are [not supported](https://github.com/dart-lang/sdk/issues/38578) in Dart at the moment,
-so they are missing, as well as makros.
-The generated bindings can all be found in the /wrappers section and are named after the group they are from.
-Documentation of the bounded functions was copied from the Opus headers (and is thus not very well formated).
-For sake of completeness the tool folder contains the code that was used for generation. NOTE that [ffi_tool](https://github.com/dart-interop/ffi_tool) ^0.4.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub. Also, since in the meantime a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - emerged, this should be used to generate bindings for further opus versions.
+Starting version 4 of this package, [ffigen](https://pub.dev/packages/ffigen) is used to generated the bindings.
 
 <a name="choosing_firendly"></a>
 ### The Dart Friendly API
@@ -58,28 +54,26 @@ so that the allocated native memory can be released. Otherwise, a memory leak ma
 ## Initialization
 <a name="init_bindings"></a>
 ### The Bindings
-Each generated library in /wrappers (except opus_defines.h) need to be initialized if used.
-The generated libraries are intended to be used with a prefix, because they sometimes have
-functions with the same signature. For example, you would import them using
+The generated bindings can be found in the library `opus_bindings`. The main class, containing all the functions from the opus c headers is `OpusBindings`.
+An example to print the opus version using the bindings api would be:
 ```dart
-import 'package:opus_dart/wrappers/opus_libinfo.dart' as opus_libinfo;
-import 'package:opus_dart/wrappers/opus_custom.dart' as opus_custom;
-```
-and then you can call in your startup logic
-```dart
-late final opus_libinfo.FunctionsAndGlobals libinfo;
-late final opus_custom.FunctionsAndGlobals custom;
-void main(){
-    libinfo=opus_libinfo.FunctionsAndGlobals(lib);
-    custom=opus_custom.FunctionsAndGlobals(lib);
+import 'dart:ffi';
+
+import 'package:ffi/ffi.dart';
+import 'package:opus_dart/opus_bindings.dart';
+
+void main(List<String> args) {
+  OpusBindings bindings = OpusBindings(lib);
+  Pointer<Char> version = bindings.opus_get_version_string();
+  String dartVersion = version.cast<Utf8>().toDartString();
+  print(dartVersion);
 }
 ```
-Finally, you can use the objects `libinfo` and `custom` to access the functions and globals.
 
 <a name="init_friendly"></a>
 ### The Dart Friendly API
-If using the dart firendly library opus_dart, you also have to initialize it using the toplevel `initOpus` function,
-but unlike the bindings, there is no need to import it with a prefix. This would look like:
+If using the dart firendly library opus_dart, you have to initialize it using the toplevel `initOpus` function.
+This would look like:
 ```dart
 import 'package:opus_dart/opus_dart.dart';
 
@@ -93,10 +87,7 @@ void main(){
 <a name="init_lib"></a>
 ### What is `lib`?
 As you may have noticed above, both, the Dart friendly API and the bindings need `lib` to initalize.
-Since web support was introduced in vesion `3.0.0` of this package, `lib` is something different on platforms
-that support `dart:ffi`, and on the web, where `dart:ffi` is not available, and where [web_ffi](https://pub.dev/packages/web_ffi) is used to emulate `dart:ffi`.
-
-On a `dart:ffi` platform, `lib` is a [dart:ffi DynamicLibrary](https://api.dart.dev/stable/2.12.0/dart-ffi/DynamicLibrary-class.html) instance, pointing to libopus. You can dynamically load it:
+`lib` is a [dart:ffi DynamicLibrary](https://api.dart.dev/stable/3.4.3/dart-ffi/DynamicLibrary-class.html) instance, pointing to libopus. You can dynamically load it:
 ```dart
 import 'dart:ffi';
 import 'dart:io' show Platform;
@@ -116,19 +107,10 @@ void main() {
 }
 ```
 
-On the web, `lib` is a [web_ffi DynamicLibrary](https://pub.dev/documentation/web_ffi/latest/web_ffi/DynamicLibrary-class.html) instance.
-You can also dynamically load it, but you have to inject some JavaScript into your page first. A detailed walkthrough can be found in [web_ffi's example](https://github.com/EPNW/web_ffi/blob/master/example/README.md).
-Note: If you use the dart fiendly API with `web_ffi`, all `Opaque` types are registered automatically. If you use the bindings with `web_ffi`, you have to register them manually!
-
-Also, it might be interesting to study the [example](https://github.com/EPNW/opus_dart/tree/master/example), what makes use of conditional imports and initalization.
-
-**Attention:** This package does not contain any binaries, and even if libopus is open source, no source files are included in this package either,
-since there is [no native build system for dart:ffi](https://github.com/dart-lang/sdk/issues/36712) at the moment.
-There is also no build system for WebAssembly integrated in dart at the moment.
+**Attention:** This package does not contain any binaries, and even if libopus is open source, no source files (except the headers needed for binding generation) are included in this package either, since there is [no stable native build system for dart:ffi](https://github.com/dart-lang/sdk/issues/36712) at the moment.
 It's up to you to get binaries and to distribute them with your application.
 Keep in mind that you need a dynamic library for all operating systems and architectures you want to support.
 Whether you use prebuild binaries or compile libopus from [source](https://github.com/xiph/opus/) yourself, the version you use should match this packages wrapped version (see above). An example to build Opus can be found in the [Dockerfile on this packages GitHub page](https://github.com/EPNW/opus_dart/blob/master/Dockerfile).
-An example to build it for the web can be found in [web_ffi's example](https://github.com/EPNW/web_ffi/blob/master/example/README.md).
 
 <a name="init_flutter"></a>
 ### Flutter

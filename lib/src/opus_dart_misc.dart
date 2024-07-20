@@ -1,9 +1,7 @@
-import 'dart:convert';
-import 'proxy_ffi.dart';
+import 'dart:ffi';
+import 'generated_bindings.dart' show OpusBindings;
 
-import '../wrappers/opus_libinfo.dart' as opus_libinfo;
-import '../wrappers/opus_encoder.dart' as opus_encoder;
-import '../wrappers/opus_decoder.dart' as opus_decoder;
+import 'package:ffi/ffi.dart';
 
 /// Max bitstream size of a single opus packet.
 ///
@@ -22,15 +20,7 @@ int maxSamplesPerPacket(int sampleRate, int channels) => ((sampleRate *
 
 /// Returns the version of the native libopus library.
 String getOpusVersion() {
-  return _asString(opus.libinfo.opus_get_version_string());
-}
-
-String _asString(Pointer<Uint8> pointer) {
-  int i = 0;
-  while (pointer.elementAt(i).value != 0) {
-    i++;
-  }
-  return utf8.decode(pointer.asTypedList(i));
+  return opus.bindings.opus_get_version_string().cast<Utf8>().toDartString();
 }
 
 /// Thrown when a native exception occurs.
@@ -39,7 +29,8 @@ class OpusException implements Exception {
   const OpusException(this.errorCode);
   @override
   String toString() {
-    String error = _asString(opus.libinfo.opus_strerror(errorCode));
+    String error =
+        opus.bindings.opus_strerror(errorCode).cast<Utf8>().toDartString();
     return 'OpusException $errorCode: $error';
   }
 }
@@ -57,28 +48,15 @@ class OpusDestroyedError extends StateError {
 late final ApiObject opus;
 
 class ApiObject {
-  final opus_libinfo.FunctionsAndGlobals libinfo;
-  final opus_encoder.FunctionsAndGlobals encoder;
-  final opus_decoder.FunctionsAndGlobals decoder;
   final Allocator allocator;
+  final OpusBindings bindings;
 
-  ApiObject(DynamicLibrary opus, this.allocator)
-      : libinfo = new opus_libinfo.FunctionsAndGlobals(opus),
-        encoder = new opus_encoder.FunctionsAndGlobals(opus),
-        decoder = new opus_decoder.FunctionsAndGlobals(opus);
+  const ApiObject(this.bindings, this.allocator);
 }
 
 /// Must be called to initalize this library.
 ///
-/// On platforms where dart:ffi is available, the [dart:ffi DynamicLibrary](https://api.dart.dev/stable/2.12.0/dart-ffi/DynamicLibrary-class.html) `opusLib`
-/// must point to a platform native libopus library with the appropriate version.
-///
-/// On platforms where there is no dart:ffi, most notabley on the web, `opusLib`
-/// should be a [web_ffi DynamicLibrary](https://pub.dev/documentation/web_ffi/latest/web_ffi/DynamicLibrary-class.html). The [web_ffi Memory](https://pub.dev/documentation/web_ffi/latest/web_ffi_modules/Memory/init.html) object should
-/// have been initalized before calling this function. This function registers all
-/// Opaque types for you.
-///
 /// See the README for more information about loading and versioning.
 void initOpus(DynamicLibrary opusLib) {
-  opus = createApiObject(opusLib);
+  opus = ApiObject(OpusBindings(opusLib), malloc);
 }

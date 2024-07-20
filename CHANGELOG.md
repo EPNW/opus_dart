@@ -1,3 +1,10 @@
+## [4.0.0] - 20.07.2024
+
+* libopus 1.3.1
+* BREAKING: Switched from `ffitool` to `ffigen` for binding generation
+* BREAKING: Removed web support, since [web_ffi](https://github.com/EPNW/web_ffi/) is outdated
+
+
 ## [3.0.1] - 06.11.2023
 
 * libopus 1.3.1

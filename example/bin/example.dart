@@ -5,12 +5,11 @@ import 'dart:math';
 import 'package:example/example.dart';
 import 'package:opus_dart/opus_dart.dart';
 
-/// Should be run from the example
+/// Should be run from the example directory
 Future<void> main() async {
-  await initFfi();
   initOpus(openOpus());
   Uint8List data = await example();
-  await saveOrDownload(data);
+  await save(data);
 }
 
 Stream<List<int>> simulateInput() async* {
