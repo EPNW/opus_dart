@@ -7,9 +7,9 @@ DynamicLibrary openOpus() {
     bool x64 = Platform.version.contains('x64');
     if (x64) {
       lib =
-          new DynamicLibrary.open('C:/Users/Eric/Desktop/opus/libopus_x64.dll');
+          new DynamicLibrary.open('C:/Users/Eric/Desktop/opus/libopus.x64.dll');
     } else {
-      lib = new DynamicLibrary.open('path/to/libopus_x86.dll');
+      lib = new DynamicLibrary.open('path/to/libopus.x86.dll');
     }
   } else if (Platform.isLinux) {
     lib = new DynamicLibrary.open('/usr/local/lib/libopus.so');

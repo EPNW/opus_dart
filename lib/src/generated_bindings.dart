@@ -4,6 +4,7 @@
 // ignore_for_file: type=lint
 import 'dart:ffi' as ffi;
 
+/// The main class for the generated bindings containing all the methods from the opus header files.
 class OpusBindings {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
@@ -97,7 +98,7 @@ class OpusBindings {
   /// This must be one of 8000, 12000, 16000,
   /// 24000, or 48000.
   /// @param [in] channels <tt>int</tt>: Number of channels (1 or 2) in input signal
-  /// @param [in] application <tt>int</tt>: Coding mode (@ref OPUS_APPLICATION_VOIP/@ref OPUS_APPLICATION_AUDIO/@ref OPUS_APPLICATION_RESTRICTED_LOWDELAY)
+  /// @param [in] application <tt>int</tt>: Coding mode (one of @ref OPUS_APPLICATION_VOIP, @ref OPUS_APPLICATION_AUDIO, or @ref OPUS_APPLICATION_RESTRICTED_LOWDELAY)
   /// @param [out] error <tt>int*</tt>: @ref opus_errorcodes
   /// @note Regardless of the sampling rate and number channels selected, the Opus encoder
   /// can switch to a lower audio bandwidth or number of channels if the bitrate
@@ -134,7 +135,7 @@ class OpusBindings {
   /// This must be one of 8000, 12000, 16000,
   /// 24000, or 48000.
   /// @param [in] channels <tt>int</tt>: Number of channels (1 or 2) in input signal
-  /// @param [in] application <tt>int</tt>: Coding mode (OPUS_APPLICATION_VOIP/OPUS_APPLICATION_AUDIO/OPUS_APPLICATION_RESTRICTED_LOWDELAY)
+  /// @param [in] application <tt>int</tt>: Coding mode (one of OPUS_APPLICATION_VOIP, OPUS_APPLICATION_AUDIO, or OPUS_APPLICATION_RESTRICTED_LOWDELAY)
   /// @retval #OPUS_OK Success or @ref opus_errorcodes
   int opus_encoder_init(
     ffi.Pointer<OpusEncoder> st,
@@ -530,6 +531,295 @@ class OpusBindings {
   late final _opus_decoder_destroy = _opus_decoder_destroyPtr
       .asFunction<void Function(ffi.Pointer<OpusDecoder>)>();
 
+  /// Gets the size of an <code>OpusDREDDecoder</code> structure.
+  /// @returns The size in bytes.
+  int opus_dred_decoder_get_size() {
+    return _opus_dred_decoder_get_size();
+  }
+
+  late final _opus_dred_decoder_get_sizePtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function()>>(
+          'opus_dred_decoder_get_size');
+  late final _opus_dred_decoder_get_size =
+      _opus_dred_decoder_get_sizePtr.asFunction<int Function()>();
+
+  /// Allocates and initializes an OpusDREDDecoder state.
+  /// @param [out] error <tt>int*</tt>: #OPUS_OK Success or @ref opus_errorcodes
+  ffi.Pointer<OpusDREDDecoder> opus_dred_decoder_create(
+    ffi.Pointer<ffi.Int> error,
+  ) {
+    return _opus_dred_decoder_create(
+      error,
+    );
+  }
+
+  late final _opus_dred_decoder_createPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OpusDREDDecoder> Function(
+              ffi.Pointer<ffi.Int>)>>('opus_dred_decoder_create');
+  late final _opus_dred_decoder_create =
+      _opus_dred_decoder_createPtr.asFunction<
+          ffi.Pointer<OpusDREDDecoder> Function(ffi.Pointer<ffi.Int>)>();
+
+  /// Initializes an <code>OpusDREDDecoder</code> state.
+  /// @param[in] dec <tt>OpusDREDDecoder*</tt>: State to be initialized.
+  int opus_dred_decoder_init(
+    ffi.Pointer<OpusDREDDecoder> dec,
+  ) {
+    return _opus_dred_decoder_init(
+      dec,
+    );
+  }
+
+  late final _opus_dred_decoder_initPtr = _lookup<
+          ffi.NativeFunction<ffi.Int Function(ffi.Pointer<OpusDREDDecoder>)>>(
+      'opus_dred_decoder_init');
+  late final _opus_dred_decoder_init = _opus_dred_decoder_initPtr
+      .asFunction<int Function(ffi.Pointer<OpusDREDDecoder>)>();
+
+  /// Frees an <code>OpusDREDDecoder</code> allocated by opus_dred_decoder_create().
+  /// @param[in] dec <tt>OpusDREDDecoder*</tt>: State to be freed.
+  void opus_dred_decoder_destroy(
+    ffi.Pointer<OpusDREDDecoder> dec,
+  ) {
+    return _opus_dred_decoder_destroy(
+      dec,
+    );
+  }
+
+  late final _opus_dred_decoder_destroyPtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<OpusDREDDecoder>)>>(
+      'opus_dred_decoder_destroy');
+  late final _opus_dred_decoder_destroy = _opus_dred_decoder_destroyPtr
+      .asFunction<void Function(ffi.Pointer<OpusDREDDecoder>)>();
+
+  /// Perform a CTL function on an Opus DRED decoder.
+  ///
+  /// Generally the request and subsequent arguments are generated
+  /// by a convenience macro.
+  /// @param dred_dec <tt>OpusDREDDecoder*</tt>: DRED Decoder state.
+  /// @param request This and all remaining parameters should be replaced by one
+  /// of the convenience macros in @ref opus_genericctls or
+  /// @ref opus_decoderctls.
+  /// @see opus_genericctls
+  /// @see opus_decoderctls
+  int opus_dred_decoder_ctl(
+    ffi.Pointer<OpusDREDDecoder> dred_dec,
+    int request,
+  ) {
+    return _opus_dred_decoder_ctl(
+      dred_dec,
+      request,
+    );
+  }
+
+  late final _opus_dred_decoder_ctlPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<OpusDREDDecoder>, ffi.Int)>>('opus_dred_decoder_ctl');
+  late final _opus_dred_decoder_ctl = _opus_dred_decoder_ctlPtr
+      .asFunction<int Function(ffi.Pointer<OpusDREDDecoder>, int)>();
+
+  /// Gets the size of an <code>OpusDRED</code> structure.
+  /// @returns The size in bytes.
+  int opus_dred_get_size() {
+    return _opus_dred_get_size();
+  }
+
+  late final _opus_dred_get_sizePtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function()>>('opus_dred_get_size');
+  late final _opus_dred_get_size =
+      _opus_dred_get_sizePtr.asFunction<int Function()>();
+
+  /// Allocates and initializes a DRED state.
+  /// @param [out] error <tt>int*</tt>: #OPUS_OK Success or @ref opus_errorcodes
+  ffi.Pointer<OpusDRED> opus_dred_alloc(
+    ffi.Pointer<ffi.Int> error,
+  ) {
+    return _opus_dred_alloc(
+      error,
+    );
+  }
+
+  late final _opus_dred_allocPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<OpusDRED> Function(
+              ffi.Pointer<ffi.Int>)>>('opus_dred_alloc');
+  late final _opus_dred_alloc = _opus_dred_allocPtr
+      .asFunction<ffi.Pointer<OpusDRED> Function(ffi.Pointer<ffi.Int>)>();
+
+  /// Frees an <code>OpusDRED</code> allocated by opus_dred_create().
+  /// @param[in] dec <tt>OpusDRED*</tt>: State to be freed.
+  void opus_dred_free(
+    ffi.Pointer<OpusDRED> dec,
+  ) {
+    return _opus_dred_free(
+      dec,
+    );
+  }
+
+  late final _opus_dred_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<OpusDRED>)>>(
+          'opus_dred_free');
+  late final _opus_dred_free =
+      _opus_dred_freePtr.asFunction<void Function(ffi.Pointer<OpusDRED>)>();
+
+  /// Decode an Opus DRED packet.
+  /// @param [in] dred_dec <tt>OpusDRED*</tt>: DRED Decoder state
+  /// @param [in] dred <tt>OpusDRED*</tt>: DRED state
+  /// @param [in] data <tt>char*</tt>: Input payload
+  /// @param [in] len <tt>opus_int32</tt>: Number of bytes in payload
+  /// @param [in] max_dred_samples <tt>opus_int32</tt>: Maximum number of DRED samples that may be needed (if available in the packet).
+  /// @param [in] sampling_rate <tt>opus_int32</tt>: Sampling rate used for max_dred_samples argument. Needs not match the actual sampling rate of the decoder.
+  /// @param [out] dred_end <tt>opus_int32*</tt>: Number of non-encoded (silence) samples between the DRED timestamp and the last DRED sample.
+  /// @param [in] defer_processing <tt>int</tt>: Flag (0 or 1). If set to one, the CPU-intensive part of the DRED decoding is deferred until opus_dred_process() is called.
+  /// @returns Offset (positive) of the first decoded DRED samples, zero if no DRED is present, or @ref opus_errorcodes
+  int opus_dred_parse(
+    ffi.Pointer<OpusDREDDecoder> dred_dec,
+    ffi.Pointer<OpusDRED> dred,
+    ffi.Pointer<ffi.UnsignedChar> data,
+    int len,
+    int max_dred_samples,
+    int sampling_rate,
+    ffi.Pointer<ffi.Int> dred_end,
+    int defer_processing,
+  ) {
+    return _opus_dred_parse(
+      dred_dec,
+      dred,
+      data,
+      len,
+      max_dred_samples,
+      sampling_rate,
+      dred_end,
+      defer_processing,
+    );
+  }
+
+  late final _opus_dred_parsePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<OpusDREDDecoder>,
+              ffi.Pointer<OpusDRED>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              opus_int32,
+              opus_int32,
+              opus_int32,
+              ffi.Pointer<ffi.Int>,
+              ffi.Int)>>('opus_dred_parse');
+  late final _opus_dred_parse = _opus_dred_parsePtr.asFunction<
+      int Function(
+          ffi.Pointer<OpusDREDDecoder>,
+          ffi.Pointer<OpusDRED>,
+          ffi.Pointer<ffi.UnsignedChar>,
+          int,
+          int,
+          int,
+          ffi.Pointer<ffi.Int>,
+          int)>();
+
+  /// Finish decoding an Opus DRED packet. The function only needs to be called if opus_dred_parse() was called with defer_processing=1.
+  /// The source and destination will often be the same DRED state.
+  /// @param [in] dred_dec <tt>OpusDRED*</tt>: DRED Decoder state
+  /// @param [in] src <tt>OpusDRED*</tt>: Source DRED state to start the processing from.
+  /// @param [out] dst <tt>OpusDRED*</tt>: Destination DRED state to store the updated state after processing.
+  /// @returns @ref opus_errorcodes
+  int opus_dred_process(
+    ffi.Pointer<OpusDREDDecoder> dred_dec,
+    ffi.Pointer<OpusDRED> src,
+    ffi.Pointer<OpusDRED> dst,
+  ) {
+    return _opus_dred_process(
+      dred_dec,
+      src,
+      dst,
+    );
+  }
+
+  late final _opus_dred_processPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<OpusDREDDecoder>, ffi.Pointer<OpusDRED>,
+              ffi.Pointer<OpusDRED>)>>('opus_dred_process');
+  late final _opus_dred_process = _opus_dred_processPtr.asFunction<
+      int Function(ffi.Pointer<OpusDREDDecoder>, ffi.Pointer<OpusDRED>,
+          ffi.Pointer<OpusDRED>)>();
+
+  /// Decode audio from an Opus DRED packet with floating point output.
+  /// @param [in] st <tt>OpusDecoder*</tt>: Decoder state
+  /// @param [in] dred <tt>OpusDRED*</tt>: DRED state
+  /// @param [in] dred_offset <tt>opus_int32</tt>: position of the redundancy to decode (in samples before the beginning of the real audio data in the packet).
+  /// @param [out] pcm <tt>opus_int16*</tt>: Output signal (interleaved if 2 channels). length
+  /// is frame_size*channels*sizeof(opus_int16)
+  /// @param [in] frame_size Number of samples per channel to decode in \a pcm.
+  /// frame_size <b>must</b> be a multiple of 2.5 ms.
+  /// @returns Number of decoded samples or @ref opus_errorcodes
+  int opus_decoder_dred_decode(
+    ffi.Pointer<OpusDecoder> st,
+    ffi.Pointer<OpusDRED> dred,
+    int dred_offset,
+    ffi.Pointer<opus_int16> pcm,
+    int frame_size,
+  ) {
+    return _opus_decoder_dred_decode(
+      st,
+      dred,
+      dred_offset,
+      pcm,
+      frame_size,
+    );
+  }
+
+  late final _opus_decoder_dred_decodePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<OpusDecoder>,
+              ffi.Pointer<OpusDRED>,
+              opus_int32,
+              ffi.Pointer<opus_int16>,
+              opus_int32)>>('opus_decoder_dred_decode');
+  late final _opus_decoder_dred_decode =
+      _opus_decoder_dred_decodePtr.asFunction<
+          int Function(ffi.Pointer<OpusDecoder>, ffi.Pointer<OpusDRED>, int,
+              ffi.Pointer<opus_int16>, int)>();
+
+  /// Decode audio from an Opus DRED packet with floating point output.
+  /// @param [in] st <tt>OpusDecoder*</tt>: Decoder state
+  /// @param [in] dred <tt>OpusDRED*</tt>: DRED state
+  /// @param [in] dred_offset <tt>opus_int32</tt>: position of the redundancy to decode (in samples before the beginning of the real audio data in the packet).
+  /// @param [out] pcm <tt>float*</tt>: Output signal (interleaved if 2 channels). length
+  /// is frame_size*channels*sizeof(float)
+  /// @param [in] frame_size Number of samples per channel to decode in \a pcm.
+  /// frame_size <b>must</b> be a multiple of 2.5 ms.
+  /// @returns Number of decoded samples or @ref opus_errorcodes
+  int opus_decoder_dred_decode_float(
+    ffi.Pointer<OpusDecoder> st,
+    ffi.Pointer<OpusDRED> dred,
+    int dred_offset,
+    ffi.Pointer<ffi.Float> pcm,
+    int frame_size,
+  ) {
+    return _opus_decoder_dred_decode_float(
+      st,
+      dred,
+      dred_offset,
+      pcm,
+      frame_size,
+    );
+  }
+
+  late final _opus_decoder_dred_decode_floatPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(
+              ffi.Pointer<OpusDecoder>,
+              ffi.Pointer<OpusDRED>,
+              opus_int32,
+              ffi.Pointer<ffi.Float>,
+              opus_int32)>>('opus_decoder_dred_decode_float');
+  late final _opus_decoder_dred_decode_float =
+      _opus_decoder_dred_decode_floatPtr.asFunction<
+          int Function(ffi.Pointer<OpusDecoder>, ffi.Pointer<OpusDRED>, int,
+              ffi.Pointer<ffi.Float>, int)>();
+
   /// Parse an opus packet into one or more frames.
   /// Opus_decode will perform this operation internally so most applications do
   /// not need to use this function.
@@ -694,6 +984,28 @@ class OpusBindings {
               opus_int32)>>('opus_packet_get_nb_samples');
   late final _opus_packet_get_nb_samples = _opus_packet_get_nb_samplesPtr
       .asFunction<int Function(ffi.Pointer<ffi.UnsignedChar>, int, int)>();
+
+  /// Checks whether an Opus packet has LBRR.
+  /// @param [in] packet <tt>char*</tt>: Opus packet
+  /// @param [in] len <tt>opus_int32</tt>: Length of packet
+  /// @returns 1 is LBRR is present, 0 otherwise
+  /// @retval OPUS_INVALID_PACKET The compressed data passed is corrupted or of an unsupported type
+  int opus_packet_has_lbrr(
+    ffi.Pointer<ffi.UnsignedChar> packet,
+    int len,
+  ) {
+    return _opus_packet_has_lbrr(
+      packet,
+      len,
+    );
+  }
+
+  late final _opus_packet_has_lbrrPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<ffi.UnsignedChar>,
+              opus_int32)>>('opus_packet_has_lbrr');
+  late final _opus_packet_has_lbrr = _opus_packet_has_lbrrPtr
+      .asFunction<int Function(ffi.Pointer<ffi.UnsignedChar>, int)>();
 
   /// Gets the number of samples of an Opus packet.
   /// @param [in] dec <tt>OpusDecoder*</tt>: Decoder state
@@ -1245,7 +1557,7 @@ class OpusBindings {
           ffi.Pointer<OpusCustomEncoder> Function(
               ffi.Pointer<OpusCustomMode>, int, ffi.Pointer<ffi.Int>)>();
 
-  /// Destroys a an encoder state.
+  /// Destroys an encoder state.
   /// @param[in] st <tt>OpusCustomEncoder*</tt>: State to be freed.
   void opus_custom_encoder_destroy(
     ffi.Pointer<OpusCustomEncoder> st,
@@ -1452,7 +1764,7 @@ class OpusBindings {
           ffi.Pointer<OpusCustomDecoder> Function(
               ffi.Pointer<OpusCustomMode>, int, ffi.Pointer<ffi.Int>)>();
 
-  /// Destroys a an decoder state.
+  /// Destroys a decoder state.
   /// @param[in] st <tt>OpusCustomDecoder*</tt>: State to be freed.
   void opus_custom_decoder_destroy(
     ffi.Pointer<OpusCustomDecoder> st,
@@ -3072,6 +3384,10 @@ typedef Dartopus_int16 = int;
 
 final class OpusDecoder extends ffi.Opaque {}
 
+final class OpusDREDDecoder extends ffi.Opaque {}
+
+final class OpusDRED extends ffi.Opaque {}
+
 final class OpusRepacketizer extends ffi.Opaque {}
 
 final class OpusCustomEncoder extends ffi.Opaque {}
@@ -3183,6 +3499,12 @@ const int OPUS_SET_PHASE_INVERSION_DISABLED_REQUEST = 4046;
 const int OPUS_GET_PHASE_INVERSION_DISABLED_REQUEST = 4047;
 
 const int OPUS_GET_IN_DTX_REQUEST = 4049;
+
+const int OPUS_SET_DRED_DURATION_REQUEST = 4050;
+
+const int OPUS_GET_DRED_DURATION_REQUEST = 4051;
+
+const int OPUS_SET_DNN_BLOB_REQUEST = 4052;
 
 const int OPUS_AUTO = -1000;
 
