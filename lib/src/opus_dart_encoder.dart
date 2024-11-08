@@ -46,6 +46,18 @@ class SimpleOpusEncoder extends OpusEncoder {
     }
   }
 
+  int encoderCtl(
+      {required int request, required int value}) {
+    int ret = opus.encoder.opus_encoder_ctl(_opusEncoder, request, value);
+    try {
+      if (ret != opus_defines.OPUS_OK) {
+        throw OpusException(ret);
+      }
+    } finally {
+    }
+    return ret;
+  }
+
   /// Encodes a frame of pcm data, stored as Int16List.
   ///
   /// [input] needs to contain a valid count of samples for the opus codec.

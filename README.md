@@ -26,8 +26,6 @@ On small patches, the patch version of this package will increase, if a new Opus
 <a name="choosing_bindings"></a>
 ### The Bindings
 There are automatically generated bindings for most functions of the Opus include headers.
-Variadic (especially the CTL) functions are [not supported](https://github.com/dart-lang/sdk/issues/38578) in Dart at the moment,
-so they are missing, as well as makros.
 The generated bindings can all be found in the /wrappers section and are named after the group they are from.
 Documentation of the bounded functions was copied from the Opus headers (and is thus not very well formated).
 For sake of completeness the tool folder contains the code that was used for generation. NOTE that [ffi_tool](https://github.com/dart-interop/ffi_tool) ^0.4.0 is needed for generation, which might not be yet available on pub, so it's used directly from GitHub. Also, since in the meantime a somewhat official package to create ffi bindings - [ffigen](https://pub.dev/packages/ffigen) - emerged, this should be used to generate bindings for further opus versions.
@@ -140,5 +138,27 @@ import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;
 void main(){
     initOpus(await opus_flutter.load());
     print(getOpusVersion());
+}
+```
+
+
+<a name="init_encoder_ctl"></a>
+### Encoder CTL
+To perform a CTL function on an Opus encoder, you can use encoderCtl() with the request and the value. Please note that although encoderCtl allows variadic arguments in the original Opus library, the dart implementation only allows one argument. This is fine for most use cases.
+Be sure to include opus_defines.dart as it contains all the request names.
+```dart
+import 'package:opus_dart/opus_dart.dart';
+import 'package:opus_dart/wrappers/opus_defines.dart';
+import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;
+
+static const AUDIO_CHANNELS = 1;
+static const SAMPLE_RATE = 8000;
+static const OPUS_BITRATE = 15200;
+
+SimpleOpusEncoder openCbrEncoder() {
+  final opusEncoder = SimpleOpusEncoder(sampleRate: SAMPLE_RATE, channels: AUDIO_CHANNELS, application: Application.restrictedLowdely);
+  opusEncoder.encoderCtl(request: OPUS_SET_VBR_REQUEST, value: 0);
+  opusEncoder.encoderCtl(request: OPUS_SET_BITRATE_REQUEST, value: OPUS_BITRATE);
+  return opusEncoder;
 }
 ```

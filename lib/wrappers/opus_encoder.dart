@@ -15,7 +15,7 @@ import '../src/proxy_ffi.dart' as ffi;
 /// This contains the complete state of an Opus encoder.
 /// It is position independent and can be freely copied.
 /// @see opus_encoder_create,opus_encoder_init
-class OpusEncoder extends ffi.Opaque {}
+final class OpusEncoder extends ffi.Opaque {}
 
 typedef _opus_encoder_get_size_C = ffi.Int32 Function(
   ffi.Int32 channels,
@@ -83,6 +83,11 @@ typedef _opus_encoder_destroy_Dart = void Function(
 );
 
 class FunctionsAndGlobals {
+  /// Holds the symbol lookup function.
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
+  _lookup;
+
+
   FunctionsAndGlobals(ffi.DynamicLibrary _dynamicLibrary)
       : _opus_encoder_get_size = _dynamicLibrary.lookupFunction<
             _opus_encoder_get_size_C, _opus_encoder_get_size_Dart>(
@@ -107,7 +112,8 @@ class FunctionsAndGlobals {
         _opus_encoder_destroy = _dynamicLibrary.lookupFunction<
             _opus_encoder_destroy_C, _opus_encoder_destroy_Dart>(
           'opus_encoder_destroy',
-        );
+        ),
+        _lookup = _dynamicLibrary.lookup;
 
   /// Gets the size of an <code>OpusEncoder</code> structure.
   /// @param [in] channels <tt>int</tt>: Number of channels.
@@ -278,4 +284,35 @@ class FunctionsAndGlobals {
   }
 
   final _opus_encoder_destroy_Dart _opus_encoder_destroy;
+
+  /// Perform a CTL function on an Opus encoder.
+  ///
+  /// Generally the request and subsequent arguments are generated
+  /// by a convenience macro.
+  /// @param st <tt>OpusEncoder*</tt>: Encoder state.
+  /// @param request This and all remaining parameters should be replaced by one
+  /// of the convenience macros in @ref opus_genericctls or
+  /// @ref opus_encoderctls.
+  /// @see opus_genericctls
+  /// @see opus_encoderctls
+  int opus_encoder_ctl(
+      ffi.Pointer<OpusEncoder> st,
+      int request,
+      int va,
+      ) {
+    return _opus_encoder_ctl(
+      st,
+      request,
+      va,
+    );
+  }
+
+  late final _opus_encoder_ctlPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int Function(ffi.Pointer<OpusEncoder>, ffi.Int,
+              ffi.VarArgs<(ffi.Int,)>)>>('opus_encoder_ctl');
+  late final _opus_encoder_ctl = _opus_encoder_ctlPtr
+      .asFunction<int Function(ffi.Pointer<OpusEncoder>, int, int)>();
+
+
 }

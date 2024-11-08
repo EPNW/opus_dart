@@ -16,7 +16,7 @@ import '../src/proxy_ffi.dart' as ffi;
 /// This contains the complete state of an Opus decoder.
 /// It is position independent and can be freely copied.
 /// @see opus_decoder_create,opus_decoder_init
-class OpusDecoder extends ffi.Opaque {}
+final class OpusDecoder extends ffi.Opaque {}
 
 typedef _opus_decoder_get_size_C = ffi.Int32 Function(
   ffi.Int32 channels,
